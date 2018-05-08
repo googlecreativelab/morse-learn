@@ -29,6 +29,3 @@ Unless required by applicable law or agreed to in writing, software distributed 
 We encourage open sourcing projects as a way of learning from each other. Please respect our and other creators’ rights, including copyright and trademark rights when present, when sharing these works and creating derivative work.
 
 If you want more info on Google's policy, you can find that [here](https://www.google.com/policies/).
-
-## Tags
-Morse code, Accessibility, experiment, javascript
