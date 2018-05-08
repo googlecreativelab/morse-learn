@@ -1,0 +1,36 @@
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="user-scalable=no" />
+    <title>Morse - Learn</title>
+    <link rel="stylesheet" href="build/style.css">
+    <link rel="icon" href="assets/images/favicon.png">
+    <link href="https://fonts.googleapis.com/css?family=Poppins:600,700" rel="stylesheet">
+    <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-99014794-3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'UA-99014794-3');
+    </script>
+  </head>
+  <body>
+    <input id="input" type="password" autofocus autocomplete="new-password"/>
+    <div id="landscape">Please rotate back to portrait mode.</div>
+    <a id="button">?</a>
+    <div id="overlay">
+      <div class="wrapper">
+        <div class="title">
+          About
+        </div>
+        <p>We created this trainer to make learning Morse code more fun. Give it a try once you’ve set up <a href="https://support.google.com/accessibility/android/answer/9011881">Morse code for Gboard</a> and are ready to learn to type Morse code.</p>
+        <p>This experiment is part of a larger project to support Morse code for accessible communication. Learn More at <a href="http://morse.withgoogle.com/">g.co/morse</a>.</p>
+        <p>Built by Tania Finlayson,<br>Use All Five and<br>Google Creative Lab.</p>
+        <img src="assets/images/badge.svg">
+      </div>
+    </div>
+    <script src="third-party/phaser/phaser.js"></script>
+    <script src="build/bundle.js"></script>
+  </body>
+</html>

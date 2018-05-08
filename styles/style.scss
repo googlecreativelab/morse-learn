@@ -1,0 +1,142 @@
+$beige: #F1E4D4;
+$red: #EF4136;
+$black: #000000;
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  background: $red;
+}
+
+html,
+body {
+  font-family: 'Poppins', 'Helvetica', 'Arial', sans-serif;
+  font-weight: 800;
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  select,
+  textarea,
+  input {
+    font-size: 16px;
+  }
+}
+
+select,
+textarea,
+input {
+  left: -9999px;
+  position: absolute;
+  pointer-events: none;
+  z-index: -1;
+}
+
+// Fallback for landscape
+#landscape {
+  color: $beige;
+  display: none;
+  font-size: 30px;
+  left: 50%;
+  padding: 0 20px;
+  position: absolute;
+  text-align: center;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  width: 100%;
+}
+
+#button {
+  color: #F1E4D4;
+  cursor: pointer;
+  display: none;
+  font-size: 50px;
+  font-weight: 400;
+  padding: 30px 50px;
+  position: fixed;
+  text-align: center;
+  right: 0;
+  text-decoration: none;
+  top: 0;
+  z-index: 2;
+
+  &:focus {
+    outline: none;
+  }
+
+  img {
+    height: 32px;
+    margin-right: -3px;
+    margin-top: 19px;
+    pointer-events: none;
+    width: 32px;
+  }
+
+  &::after {
+    background-color: rgba($black, 0.4);
+    border-radius: 50%;
+    content: '';
+    display: block;
+    position: absolute;
+    top: 29px;
+    right: 26px;
+    height: 75px;
+    width: 75px;
+    z-index: -1;
+  }
+}
+
+// About overlay
+#overlay {
+  background-color: $red;
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  overflow-y: scroll;
+  position: absolute;
+  top: 0;
+  transition: all 0.5s;
+  width: 100%;
+  visibility: hidden;
+  -webkit-overflow-scrolling: scroll;
+  z-index: 1;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+.title {
+  color: $beige;
+  margin-bottom: 40px;
+}
+
+.wrapper {
+  color: rgba($black, 0.4);
+  font-size: 30px;
+  margin: 15% auto 0;
+  max-width: 75%;
+
+  @media only screen and (-webkit-min-device-pixel-ratio: 3) {
+    font-size: 50px;
+  }
+
+  p {
+    margin-bottom: 40px;
+  }
+
+  a {
+    color: rgba($black, 0.4);
+  }
+
+  img {
+    height: auto;
+    margin: 80px auto;
+    max-width: 600px;
+  }
+}

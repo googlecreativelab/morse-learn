@@ -1,0 +1,64 @@
+{
+  "name": "gweb-morse-tutorial",
+  "eslintConfig": {
+    "env": {
+      "browser": true
+    },
+    "globals": {
+      "window": true,
+      "document": true
+    }
+  },
+  "version": "0.0.0",
+  "license": "MIT",
+  "browserify": {
+    "transform": [
+      [
+        "babelify",
+        {
+          "presets": [
+            [
+              "env",
+              {
+                "targets": {
+                  "browsers": [
+                    "last 2 versions"
+                  ]
+                }
+              }
+            ]
+          ]
+        }
+      ]
+    ]
+  },
+  "scripts": {
+    "browserify": "browserify scripts/app.js -o build/bundle.js",
+    "build": "yarn browserify; yarn uglifyjs; yarn sass; yarn uglifycss",
+    "deploy": "yarn build; gcloud app deploy --project=gweb-morse-tts",
+    "eslint": "eslint scripts",
+    "precommit": "yarn eslint",
+    "sass": "sass styles/style.scss build/style.css",
+    "sasswatch": "sass --watch styles/style.scss:build/style.css",
+    "serve": "budo scripts/app.js:build/bundle.js --live --host 0.0.0.0",
+    "start": "yarn sass; concurrently -k -p \"[{name}]\" -n \"HTTP,SASS\" -c \"bgBlue.bold,bgMagenta.bold\" \"yarn serve\" \"yarn sasswatch\"",
+    "uglifycss": "uglifycss build/style.css --output build/style.css",
+    "uglifyjs": "uglifyjs build/bundle.js -o build/bundle.js"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-preset-env": "^1.6.1",
+    "babelify": "^8.0.0",
+    "browserify": "^16.1.0",
+    "budo": "^11.2.0",
+    "concurrently": "^3.5.1",
+    "eslint": "^4.18.0",
+    "git-pre-commit": "^2.1.3",
+    "node-sass": "^4.7.2",
+    "uglify-js": "^3.3.11",
+    "uglifycss": "^0.0.27"
+  },
+  "dependencies": {
+    "lodash": "^4.17.5"
+  }
+}
