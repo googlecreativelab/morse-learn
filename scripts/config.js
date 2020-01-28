@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+import { getClientHeight } from './util'
+
 const isTouch = 'ontouchstart' in document.documentElement;
 const isLandscape = window.innerWidth > window.innerHeight;
 
@@ -19,9 +21,9 @@ const isLandscape = window.innerWidth > window.innerHeight;
 const keyboardHeight = () => {
   let height;
   if (screen.width >= 768) {
-    height = (!isLandscape ? document.body.clientHeight * 0.35 : document.body.clientWidth * 0.4);
+    height = (!isLandscape ? getClientHeight() * 0.35 : document.body.clientWidth * 0.4);
   } else {
-    height = (!isLandscape ? document.body.clientHeight * 0.5 : document.body.clientWidth * 0.27);
+    height = (!isLandscape ? getClientHeight() * 0.5 : document.body.clientWidth * 0.27);
   }
   return height;
 };
@@ -31,11 +33,11 @@ const config = {
     isTouch: isTouch,
     isLandscape: isLandscape,
     appWidth: document.body.clientWidth,
-    appHeight: document.body.clientHeight,
+    appHeight: getClientHeight(),
     devicePixelRatio: window.devicePixelRatio,
-    worldBottom: (!isLandscape ? document.body.clientHeight : document.body.clientWidth) - keyboardHeight(),
-    worldCenter: ((!isLandscape ? document.body.clientHeight : document.body.clientWidth) - keyboardHeight()) * 0.55,
-    worldTop: ((!isLandscape ? document.body.clientHeight : document.body.clientWidth) - keyboardHeight()) * 0.35
+    worldBottom: (!isLandscape ? getClientHeight() : document.body.clientWidth) - keyboardHeight(),
+    worldCenter: ((!isLandscape ? getClientHeight() : document.body.clientWidth) - keyboardHeight()) * 0.55,
+    worldTop: ((!isLandscape ? getClientHeight() : document.body.clientWidth) - keyboardHeight()) * 0.35
   },
   app: {
     LEARNED_THRESHOLD: 2,
@@ -56,11 +58,9 @@ const config = {
   },
   title: {
     mainFontSize: 170,
-    ctaFontSize: 40,
     startButtonSize: 60,
     titleOffset: -200,
-    ctaOffset: 150,
-    startButtonOffset: 350
+    startButtonOffset: 100
   },
   hints: {
     hintOffset: 120,
@@ -71,7 +71,15 @@ const config = {
     SLIDE_START_DELAY: 400,
     SLIDE_END_DELAY: 600,
     SLIDE_TRANSITION: 600,
-  }
+  },
+  emulator: {
+    keysMap: {
+      period: [ '.' ],
+      dash: [ '-' ],
+    },
+    finalizeTimeout: 1500,
+  },
+  letters: ['e', 't', 'a', 'i', 'm', 's', 'o', 'h', 'n', 'c', 'r', 'd', 'u', 'k', 'l', 'f', 'b', 'p', 'g', 'j', 'v', 'q', 'w', 'x', 'y', 'z'],
 };
 
 module.exports = config;

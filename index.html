@@ -7,6 +7,7 @@
     <link rel="icon" href="assets/images/favicon.png">
     <link href="https://fonts.googleapis.com/css?family=Poppins:600,700" rel="stylesheet">
     <!-- Global Site Tag (gtag.js) - Google Analytics -->
+    <!--
     <script async src="https://www.googletagmanager.com/gtag/js?id=UA-99014794-3"></script>
     <script>
       window.dataLayer = window.dataLayer || [];
@@ -14,11 +15,16 @@
       gtag('js', new Date());
       gtag('config', 'UA-99014794-3');
     </script>
+    -->
   </head>
   <body>
-    <input id="input" type="password" autofocus autocomplete="new-password"/>
+    <input id="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
     <div id="landscape">Please rotate back to portrait mode.</div>
     <a id="button">?</a>
+    <div class="tl-btn-group">
+      <a href title="Audio toggle" class="item audio-toggle"><i class="fa fa-2x fa-volume-up"></i></a>
+      <a href title="Speech toggle" class="item speech-toggle"><i class="fa fa-2x fa-assistive-listening-systems"></i></a>
+    </div>
     <div id="overlay">
       <div class="wrapper">
         <div class="title">

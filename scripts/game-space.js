@@ -16,6 +16,7 @@ import { Word } from './word';
 let _ = require('lodash');
 const words = require('./words');
 const config = require('./config');
+const delay = require('delay');
 
 class GameSpace {
 
@@ -30,7 +31,6 @@ class GameSpace {
     this.inputReady = false;
     this.game = game;
     this.gameSpaceGroup = this.game.add.group();
-
     this.allBgColors = [
       0xef4136,
       0xf7941e,
@@ -88,15 +88,74 @@ class GameSpace {
     this.newLetterArray.sort();
     this.loadLetters();
 
-    document.removeEventListener('textInput', this.game.downEvent);
-
-    this.game.downEvent = function(e) {
-      if (this.inputReady) {
-        this.checkMatch(e);
+    let inpelm = document.getElementById('input');
+    inpelm.value = '';
+    if (!this.game.device.desktop && this.game.device.android) {
+      if (document._game_downEvent) {
+        document.removeEventListener('textInput', document._game_downEvent);
       }
-    };
 
-    document.addEventListener('textInput', this.game.downEvent.bind(this));
+      document._game_downEvent = (e) => {
+        const data = e.data;
+        let typedLetter;
+        if (data === ' ') {
+          typedLetter = inpelm.value;
+          typedLetter = typedLetter.trim();
+          typedLetter = typedLetter[typedLetter.length - 1];
+        } else {
+          typedLetter = data;
+        }
+        typedLetter = typedLetter.toLowerCase();
+        if (typeof typedLetter !== 'undefined') {
+          this.checkMatch(typedLetter);
+        }
+      };
+      document.addEventListener('textInput', document._game_downEvent);
+    } else {
+      if (document._game_inputEvent) {
+        document.removeEventListener('input', document._game_inputEvent);
+      }
+      if (inpelm._game_onBlur) {
+        inpelm.removeEventListener('blur', inpelm._game_onBlur);
+      }
+      let morseInputTimeout = null
+      let morseInputs = []
+      document._game_inputEvent = (evt) => {
+        evt.preventDefault();
+        if (morseInputTimeout != null) {
+          clearTimeout(morseInputTimeout);
+        }
+        morseInputTimeout = setTimeout(() => {
+          morseInputTimeout = null;
+          if (morseInputs.length > 0) {
+            // finalize
+            let letter = this.parent.morseToEnglish[morseInputs.join('')];
+            if (letter) {
+              this.checkMatch(letter);
+            }
+            morseInputs = [];
+          }
+        }, config.emulator.finalizeTimeout);
+        if (config.emulator.keysMap.period.indexOf(evt.data) != -1) {
+          morseInputs.push('.');
+          if (this.game.have_audio) {
+            this.parent.sounds.period.play();
+          }
+        } else if (config.emulator.keysMap.dash.indexOf(evt.data) != -1) {
+          morseInputs.push('-');
+          if (this.game.have_audio) {
+            this.parent.sounds.dash.play();
+          }
+        }
+      };
+      document.addEventListener('input', document._game_inputEvent);
+      inpelm._game_onBlur = () => {
+        setTimeout(() => {
+          inpelm.focus();
+        }, 500);
+      };
+      inpelm.addEventListener('blur', inpelm._game_onBlur);
+    }
 
     setTimeout(() => {
       for (let i = 0; i < config.app.howManyWordsToStart; i++) {
@@ -108,24 +167,32 @@ class GameSpace {
           const myStartX = this.currentWords[i - 1].myStartX + (this.currentWords[i - 1].letterObjects.length * config.app.wordBrickSize) + config.app.spaceBetweenWords;
           this.currentWords[i].setPosition(myStartX);
         } else {
-          this.currentWords[i].setPosition(config.app.wordBrickSize);
-
-          // Animate stuff immediately when first starting
-          this.game.add.tween(this.currentWords[i].pills[0].scale).to({ x: 1, y: 1 }, 250, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_START_DELAY);
-          this.game.add.tween(this.currentWords[i].pills[0]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
-          this.game.add.tween(this.currentWords[i].letterObjects[0]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
-          this.currentWords[i].letterObjects[0].addColor('#F1E4D4', 0);
-          this.currentWords[i].letterObjects[0].alpha = 1;
-
-          setTimeout(() => {
-            this.inputReady = true;
-          }, config.animations.SLIDE_END_DELAY + 800);
+          this.createFirstWord();
         }
       }
-
-      this.currentWords[0].setStyle(0);
-      this.currentWords[0].updateHint();
     }, 0);
+  }
+
+  async createFirstWord() {
+    let word = this.currentWords[0];
+    let letter = word.myLetters[word.currentLetterIndex];
+    word.setPosition(config.app.wordBrickSize);
+
+    // Animate stuff immediately when first starting
+    this.game.add.tween(word.pills[0].scale).to({ x: 1, y: 1 }, 250, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_START_DELAY);
+    this.game.add.tween(word.pills[0]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
+    this.game.add.tween(word.letterObjects[0]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
+    word.letterObjects[0].addColor('#F1E4D4', 0);
+    word.letterObjects[0].alpha = 1;
+
+    // await delay(config.animations.SLIDE_END_DELAY + 800);
+    word.setStyle(0);
+    if (this.game.have_speech_assistive) {
+      // play the letter again
+      await this.playLetter(letter);
+    }
+    await word.updateHint();
+    this.inputReady = true;
   }
 
   // Set current pool to saved learned letters
@@ -203,91 +270,123 @@ class GameSpace {
     this.currentWords[this.currentWords.length - 1].setPosition(myStartX);
   }
 
-  checkMatch(e) {
-    const data = e.data;
+  async checkMatch(typedLetter) {
+    if (!this.inputReady) {
+      return;
+    }
+    this.inputReady = false;
     let word = this.currentWords[this.currentWordIndex];
     let letter = word.myLetters[word.currentLetterIndex];
-    let typedLetter;
+    if (typedLetter === letter) {
+      this.mistakeCount = 0;
+      this.consecutiveCorrect++;
 
-    this.inputReady = false;
+      this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
 
-    if (data === ' ') {
-      typedLetter = document.getElementById('input').value;
-      typedLetter = typedLetter.trim();
-      typedLetter = typedLetter[typedLetter.length - 1];
-    } else {
-      typedLetter = data;
-    }
+      word.pushDown(word.currentLetterIndex);
+      word.currentLetterIndex++;
+      this.letterScoreDict[letter] += 1;
 
-    typedLetter = typedLetter.toLowerCase();
+      if (this.letterScoreDict[letter] > config.app.LEARNED_THRESHOLD + 2) {
+        this.letterScoreDict[letter] = config.app.LEARNED_THRESHOLD + 2
+      }
+      if (this.game.have_speech_assistive) {
+        await this.playCorrect();
+      }
 
-    if (typeof typedLetter !== 'undefined') {
-      if (typedLetter === letter) {
-        this.mistakeCount = 0;
-        this.consecutiveCorrect++;
+      // next
+      if (word.currentLetterIndex >= word.myLetters.length) {
+        this.currentWordIndex++;
+        word.currentLetterIndex = 0;
 
+        if (this.currentWordIndex > this.currentWords.length - 2) {
+          this.addAWord();
+        }
+      }
+
+      word = this.currentWords[this.currentWordIndex];
+      letter = word.myLetters[word.currentLetterIndex];
+      let theLetterIndex = this.newLetterArray.indexOf(typedLetter);
+
+      this.slideLetters();
+      if (this.game.have_speech_assistive) {
+        // play the letter again
+        await this.playLetter(letter);
+      }
+      if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
         this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
+        await word.updateHint();
+        word.applyHint(word.currentLetterIndex);
+      }
+      this.parent.header.updateProgressLights(this.letterScoreDict, theLetterIndex);
+    } else {
+      this.mistakeCount++;
+      this.consecutiveCorrect = 0;
 
-        word.pushDown(word.currentLetterIndex);
-        word.currentLetterIndex++;
-        this.letterScoreDict[letter] += 1;
+      let letterMistake = word.letterObjects[word.currentLetterIndex].hasMistake;
+      this.letterScoreDict[letter] -= 1;
+      word.shake(word.currentLetterIndex);
+      // console.log('not a match: ' + typedLetter + ' ' + letter);
 
-        if (this.letterScoreDict[letter] > config.app.LEARNED_THRESHOLD + 2) {
-          this.letterScoreDict[letter] = config.app.LEARNED_THRESHOLD + 2
+      if (this.game.have_speech_assistive) {
+        await this.playWrong();
+      }
+
+      this.parent.header.updateProgressLights(this.letterScoreDict, letter);
+
+      if (this.letterScoreDict[letter] < -config.app.LEARNED_THRESHOLD - 2) {
+        this.letterScoreDict[letter] = -config.app.LEARNED_THRESHOLD - 2;
+      }
+
+      if (this.game.have_speech_assistive) {
+        // play the letter again
+        await this.playLetter(letter);
+      }
+      if (!letterMistake) {
+        letterMistake = true;
+
+        if (this.mistakeCount === 3) {
+          await word.updateHint(true);
         }
 
-        if (word.currentLetterIndex >= word.myLetters.length) {
-          this.currentWordIndex++;
-          word.currentLetterIndex = 0;
-
-          if (this.currentWordIndex > this.currentWords.length - 2) {
-            this.addAWord();
-          }
-        }
-
-        word = this.currentWords[this.currentWordIndex];
-        letter = word.myLetters[word.currentLetterIndex];
-        let theLetterIndex = this.newLetterArray.indexOf(typedLetter);
-
-        if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
-          this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
-          word.updateHint();
+        if (this.mistakeCount === 4) {
+          await word.updateHint();
+          await delay(300);
+          await this.playLetterSoundAlike(letter);
           word.applyHint(word.currentLetterIndex);
         }
-        this.slideLetters();
-        this.parent.header.updateProgressLights(this.letterScoreDict, theLetterIndex);
-      } else {
-        this.mistakeCount++;
-        this.consecutiveCorrect = 0;
-
-        let letterMistake = word.letterObjects[word.currentLetterIndex].hasMistake;
-        this.letterScoreDict[letter] -= 1;
-        word.shake(word.currentLetterIndex);
-        // console.log('not a match: ' + typedLetter + ' ' + letter);
-
-        this.parent.header.updateProgressLights(this.letterScoreDict, letter);
-
-        if (this.letterScoreDict[letter] < -config.app.LEARNED_THRESHOLD - 2) {
-          this.letterScoreDict[letter] = -config.app.LEARNED_THRESHOLD - 2;
-        }
-
-        if (!letterMistake) {
-          letterMistake = true;
-
-          if (this.mistakeCount === 3) {
-            word.updateHint(true);
-          }
-
-          if (this.mistakeCount === 4) {
-            word.updateHint();
-            word.applyHint(word.currentLetterIndex);
-          }
-        }
-
-        setTimeout(() => {
-          this.inputReady = true;
-        }, 600);
       }
+    }
+    this.inputReady = true;
+  }
+
+  async playWrong() {
+    let tmp = this.parent.sounds.wrong.play();
+    let timeout = tmp.totalDuration || 1;
+    await delay(timeout * 1000);
+  }
+
+  async playCorrect() {
+    let tmp = this.parent.sounds.correct.play();
+    let timeout = tmp.totalDuration || 1;
+    await delay(timeout * 1000);
+  }
+
+  async playLetter(letter) {
+    let audio = this.parent.sounds['letter-' + letter];
+    if (audio) {
+      let tmp = audio.play();
+      let timeout = tmp.totalDuration || 1;
+      await delay(timeout * 1000);
+    }
+  }
+
+  async playLetterSoundAlike(letter) {
+    let audio = this.parent.sounds['soundalike-letter-' + letter];
+    if (audio) {
+      let tmp = audio.play();
+      let timeout = tmp.totalDuration || 1;
+      await delay(timeout * 1000);
     }
   }
 
@@ -298,43 +397,43 @@ class GameSpace {
   }
 
   slideLetters() {
-    const word = this.currentWords[this.currentWordIndex];
-    const letterObject = word.letterObjects[word.currentLetterIndex];
-    const target = config.app.wordBrickSize;
-    const distBetweenTargetAndNextLetter = letterObject.position.x - target;
+    return new Promise((resolve) => {
+      const word = this.currentWords[this.currentWordIndex];
+      const letterObject = word.letterObjects[word.currentLetterIndex];
+      const target = config.app.wordBrickSize;
+      const distBetweenTargetAndNextLetter = letterObject.position.x - target;
 
-    for (let w = 0; w < this.currentWords.length; w++) {
-      const bg = this.currentWords[w].background;
-      const bgX = bg.position.x;
+      for (let w = 0; w < this.currentWords.length; w++) {
+        const bg = this.currentWords[w].background;
+        const bgX = bg.position.x;
 
-      for (let l = 0; l < this.currentWords[w].letterObjects.length; l++) {
-        const letter = this.currentWords[w].letterObjects[l];
-        const letterX = letter.position.x;
-        const hint = this.currentWords[w].hints[l];
-        const hintX = hint.text.x;
-        const pill = this.currentWords[w].pills[l];
-        const pillX = pill.position.x;
+        for (let l = 0; l < this.currentWords[w].letterObjects.length; l++) {
+          const letter = this.currentWords[w].letterObjects[l];
+          const letterX = letter.position.x;
+          const hint = this.currentWords[w].hints[l];
+          const hintX = hint.text.x;
+          const pill = this.currentWords[w].pills[l];
+          const pillX = pill.position.x;
 
-        this.game.add.tween(letter).to({ x: letterX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
-        this.game.add.tween(hint).to({ x: hintX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
-        this.game.add.tween(pill).to({ x: pillX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
+          this.game.add.tween(letter).to({ x: letterX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
+          this.game.add.tween(hint).to({ x: hintX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
+          this.game.add.tween(pill).to({ x: pillX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
+        }
+
+        this.game.add.tween(bg).to({ x: bgX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
       }
 
-      this.game.add.tween(bg).to({ x: bgX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
-    }
+      // Set video as watched if user passes first word
+      if (this.currentWordIndex > 0) {
+        this.setWatchedVideo();
+      }
 
-    // Set video as watched if user passes first word
-    if (this.currentWordIndex > 0) {
-      this.setWatchedVideo();
-    }
+      this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 1, y: 1 }, 250, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
 
-    this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 1, y: 1 }, 250, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
+      setTimeout(resolve, config.animations.SLIDE_END_DELAY + 450);
 
-    setTimeout(() => {
-      this.inputReady = true;
-    }, config.animations.SLIDE_END_DELAY + 450);
-
-    word.setStyle(word.currentLetterIndex);
+      word.setStyle(word.currentLetterIndex);
+    });
   }
 }
 

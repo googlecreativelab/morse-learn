@@ -11,11 +11,12 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
+import 'babel-polyfill';
 import { TitleState } from './title-state';
 import { IntroState } from './intro-state';
 import { GameState } from './game-state';
 import * as config from './config';
+import { getClientHeight } from './util'
 
 class App {
 
@@ -47,7 +48,7 @@ class App {
 
   // Determines starting device orientation
   determineOrientation() {
-    let bodyHeight = document.body.clientHeight;
+    let bodyHeight = getClientHeight();
 
     return new Promise((resolve) => {
       if (config.GLOBALS.isLandscape && screen.width <= 768) {
@@ -150,6 +151,15 @@ class App {
     // Audio
     this.game.load.audio('period', 'assets/sounds/period.mp3');
     this.game.load.audio('dash', 'assets/sounds/dash.mp3');
+
+    // letters + soundalike list
+    for (let letter of config.letters) {
+      this.game.load.audio('letter-' + letter, 'assets/sounds/' + letter + '.mp3');
+      this.game.load.audio('soundalike-letter-' + letter, 'assets/sounds/soundalikes-ww/' + letter + '.mp3');
+    }
+    // correct, wrong 
+    this.game.load.audio('correct', 'assets/sounds/correct.mp3');
+    this.game.load.audio('wrong', 'assets/sounds/wrong.mp3');
   }
 
   // Show about modal

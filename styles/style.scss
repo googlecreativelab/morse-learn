@@ -1,3 +1,9 @@
+$fa-font-path: "../webfonts";
+@import "./fontawesome/fontawesome.scss";
+@import "./fontawesome/solid.scss";
+@import "./fontawesome/regular.scss";
+
+
 $beige: #F1E4D4;
 $red: #EF4136;
 $black: #000000;
@@ -138,5 +144,19 @@ input {
     height: auto;
     margin: 80px auto;
     max-width: 600px;
+  }
+}
+
+.tl-btn-group {
+  position: fixed;
+  left: 1em;
+  top: 1em;
+  .item {
+    display: inline-block;
+    padding: 0.3em;
+    color: white;
+    &.disabled {
+      opacity: 0.5;
+    }
   }
 }

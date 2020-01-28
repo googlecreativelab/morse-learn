@@ -14,7 +14,8 @@
 
 import { HeaderSpace } from './header-space';
 import { GameSpace } from './game-space';
-import { englishToMorse } from './morse-dictionary';
+import { englishToMorse, morseToEnglish } from './morse-dictionary';
+import * as config from './config';
 
 class GameState {
 
@@ -22,13 +23,19 @@ class GameState {
     this.lettersToLearn = ['e', 't', 'a', 'i', 'm', 's', 'o', 'h', 'n', 'c', 'r', 'd', 'u', 'k', 'l', 'f', 'b', 'p', 'g', 'j', 'v', 'q', 'w', 'x', 'y', 'z'];
     this.letterScoreDict = {};
     this.morseDictionary = englishToMorse;
+    this.morseToEnglish = morseToEnglish
     this.header = null;
     this.gameSpace = null;
     this.game = game;
     // Setup sounds
-    this.sounds = {
-      period: this.game.add.audio('period'),
-      dash: this.game.add.audio('dash')
+    let soundslist = [ 'correct', 'wrong', 'period', 'dash', ];
+    for (let letter of config.letters) {
+      soundslist.push('letter-' + letter);
+      soundslist.push('soundalike-letter-' + letter);
+    }
+    this.sounds = {};
+    for (let name of soundslist) {
+      this.sounds[name] = this.game.add.audio(name);
     }
   }
 

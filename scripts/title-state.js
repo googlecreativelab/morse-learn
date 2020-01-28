@@ -22,33 +22,73 @@ class TitleState {
     this.letterScoreDict = {};
     this.hasStarted = false;
     this.game = game;
-
-    // If on touch device, wait for tap to focus input since autofocus will not work
-    // Also prevent game from restarting on touch start event
-    if (config.GLOBALS.isTouch && !this.hasStarted) {
-      this.game.touchEvent = (e) => {
-        // Prevent starting if target is not canvas
-        if (e.target.localName === 'canvas') {
-          document.getElementById('input').focus();
-          this.start();
-          this.hasStarted = true;
-        }
-      };
-
-      window.addEventListener('touchstart', this.game.touchEvent);
+    this.have_audio = true;
+    this.have_speech_assistive = true;
+    function clearEventHandlers () {
+      window.removeEventListener('click', startClickEvent)
+      document.removeEventListener('inputEvent', inputEvent)
+      audioToggle.removeEventListener('click', onSoundToggle, true);
+      speechToggle.removeEventListener('click', onSpeechToggle, true);
+      inpelm.removeEventListener('blur', onInputBlur, false);
     }
-
-    // Only start if not desktop and not iOS
-    if (!this.game.device.desktop) {
+    let doStart = () => {
+      clearEventHandlers()
+      document.getElementById('input').focus();
+      document.querySelector('.tl-btn-group').style.display = 'none';
+      this.game.have_audio = this.have_audio;
+      this.game.have_speech_assistive = this.have_speech_assistive;
+      this.start();
+      this.hasStarted = true;
+    }
+    let startClickEvent = (e) => {
+      // Prevent starting if target is not canvas
+      if (e.target.localName === 'canvas') {
+        doStart()
+      }
+    };
+    let inputEvent = (evt) => {
+      evt.preventDefault()
+      doStart()
+    };
+    window.addEventListener('click', this.game.startClickEvent);
+    if (!this.game.device.desktop && this.game.device.android) {
       this.game.downEvent = () => {
-        document.getElementById('input').focus();
-        this.start();
-        this.hasStarted = true;
+        doStart();
       };
-
       document.addEventListener('textInput', this.game.downEvent);
+    } else {
+      document.addEventListener('input', inputEvent);
+      document.getElementById('input').focus();
     }
-
+    let inpelm = document.getElementById('input');
+    let onInputBlur = () => {
+        setTimeout(() => {
+          inpelm.focus();
+        }, 500);
+    };
+    inpelm.addEventListener('blur', onInputBlur, false);
+    let audioToggle = document.querySelector('.audio-toggle')
+    let speechToggle = document.querySelector('.speech-toggle')
+    document.querySelector('.tl-btn-group').style.display = '';
+    let updateAudioToggles = () => {
+      audioToggle.classList[this.have_audio ? 'remove' : 'add']('disabled');
+      speechToggle.classList[this.have_audio && this.have_speech_assistive ? 'remove' : 'add']('disabled');
+    }
+    let onSoundToggle = (evt) => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      this.have_audio = !this.have_audio;
+      updateAudioToggles();
+    };
+    let onSpeechToggle = (evt) => {
+      evt.preventDefault();
+      evt.stopPropagation();
+      this.have_speech_assistive = !this.have_speech_assistive;
+      updateAudioToggles()
+    };
+    updateAudioToggles();
+    audioToggle.addEventListener('click', onSoundToggle, true);
+    speechToggle.addEventListener('click', onSpeechToggle, true);
   }
 
   init(params) {
@@ -123,71 +163,18 @@ class TitleState {
     title.anchor.setTo(0.5);
     title.font = config.typography.font;
 
-    // Only show start button on mobile/tablet
-    if (!this.game.device.desktop && this.game.device.android) {
-      const startText = ((config.GLOBALS.isTouch) ? 'Tap to Start' : 'Press any button to Start');
-      let startButton = this.game.add.text(this.game.world.centerX, this.game.world.centerY + config.title.startButtonOffset, startText, {
-        align: 'center'
-      });
-      startButton.fontSize = config.title.startButtonSize;
-      startButton.fill = '#F1E4D4';
-      startButton.anchor.setTo(0.5);
-      startButton.font = config.typography.font;
-
-      // Reating animation for start button
-      const startButtonTween = this.game.add.tween(startButton).to({ alpha: 0.4 }, 600, 'Linear', true, 0, -1);
-      startButtonTween.yoyo(true, 0);
-    }
-
-    // Show fallback messag if desktop/iOS
-    let ctaText;
-    if (!this.game.device.desktop && this.game.device.android) {
-      ctaText = 'Works with Gboard Beta\nGet setup here';
-    } else {
-      ctaText = 'Sorry, this experiment is for\nMorse on Gboard and is only\navailable on Android at this time.\n\nLearn more and get the source code';
-    }
-
-    let cta = this.game.add.text(this.game.world.centerX, this.game.world.centerY + (!this.game.device.desktop ? config.title.ctaOffset : config.title.ctaOffset * 0.7), ctaText, {
+    const startText = ((config.GLOBALS.isTouch) ? 'Tap to Start' : 'Press any button to Start');
+    let startButton = this.game.add.text(this.game.world.centerX, this.game.world.centerY + config.title.startButtonOffset, startText, {
       align: 'center'
     });
-    cta.fontSize = !this.game.device.desktop ? config.title.ctaFontSize : config.title.ctaFontSize * 0.7;
-    cta.lineSpacing = -5;
-    cta.alpha = 0.4;
-    cta.fill = '#000000';
-    cta.anchor.setTo(0.5, 0);
-    cta.font = config.typography.font;
+    startButton.fontSize = config.title.startButtonSize;
+    startButton.fill = '#F1E4D4';
+    startButton.anchor.setTo(0.5);
+    startButton.font = config.typography.font;
+    // Reating animation for start button
+    const startButtonTween = this.game.add.tween(startButton).to({ alpha: 0.4 }, 600, 'Linear', true, 0, -1);
+    startButtonTween.yoyo(true, 0);
 
-    // Cta Button that links externally
-    let ctaButton = this.game.add.button(this.game.world.centerX, this.game.world.centerY + (!this.game.device.desktop ? config.title.ctaOffset : config.title.ctaOffset * 0.7), '', () => {
-      // Reset game so touch event doesnt click through
-      this.game.state.restart();
-      this.hasStarted = false;
-      document.getElementById('button').style.display = 'block';
-
-      if (this.game.device.android) {
-        // Android get keyboard link
-        window.open('https://support.google.com/accessibility/android/answer/9011881', '_self');
-      } else {
-        // iOS get source code link
-        window.open('http://morse.withgoogle.com/', '_self');
-      }
-    });
-    ctaButton.anchor.set(0.5, 0);
-    ctaButton.width = cta.width;
-    ctaButton.height = cta.height;
-    ctaButton.alpha = 0;
-
-    // Move button above all things
-    this.buttonGroup = this.game.add.group();
-    this.buttonGroup.add(ctaButton);
-    this.game.world.bringToTop(this.buttonGroup);
-
-    // Underline for links
-    let underline = this.game.add.graphics(0, 0);
-    underline.beginFill(0x000000, 1);
-    underline.drawRect(cta.position.x - (this.game.device.android ? 150 : cta.width / 2), cta.position.y + (cta.height - 13), (!this.game.device.android ? cta.width : (cta.width / 2) + 50), 3);
-    underline.alpha = 0.3;
-    underline.endFill();
   }
 
   // Check if intro has been watched, if so, skip

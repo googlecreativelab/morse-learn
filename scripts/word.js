@@ -13,6 +13,7 @@
 // limitations under the License.
 
 const config = require('./config');
+const delay = require('delay');
 
 class Word {
 
@@ -131,35 +132,39 @@ class Word {
     });
   }
 
-  updateHint(textOnly) {
+  async updateHint(textOnly) {
     if (this.hints.length !== 0) {
-      setTimeout(() => {
-        if (textOnly) {
-          this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-        } else {
-          this.game.add.tween(this.hints[this.currentLetterIndex].image).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-          this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-          // Play the sounds when hint image shows
-          this.playSounds(this.letterObjects[this.currentLetterIndex]);
-        }
+      await delay(((!textOnly) ? config.animations.SLIDE_END_DELAY + 400 : 0));
+      if (textOnly) {
+        this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
+      } else {
+        this.game.add.tween(this.hints[this.currentLetterIndex].image).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
+        this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
+        // Play the sounds when hint image shows
+        await this.playSounds(this.letterObjects[this.currentLetterIndex]);
+      }
 
-        this.game.add.tween(this.hints[this.currentLetterIndex].underline).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-      }, ((!textOnly) ? config.animations.SLIDE_END_DELAY + 400 : 0));
+      this.game.add.tween(this.hints[this.currentLetterIndex].underline).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
     }
   }
 
   // Play individual dots/dash sound
   // Using 601ms for the delay between each sound because thats the dash duration
   // Which is the longest duration of the sounds
-  playSounds(letter) {
+  async playSounds(letter) {
+    if (!this.game.have_audio) {
+      return;
+    }
     for (let i = 0; i < letter.morse.length; i++) {
-      this.soundTimeout = setTimeout(() => {
-        if (letter.morse[i] === '\u002D') {
-          this.dash.play();
-        } else if (letter.morse[i] === '\u002E') {
-          this.period.play();
-        }
-      }, i * 601);
+      let tmp;
+      if (letter.morse[i] === '\u002D') {
+        tmp = this.dash.play();
+      } else if (letter.morse[i] === '\u002E') {
+        tmp = this.period.play();
+      }
+      if (tmp) {
+        await delay(Math.min(0.601, tmp.totalDuration) * 1000)
+      }
     }
   }
 
