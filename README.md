@@ -1,20 +1,26 @@
 # Morse Typing Trainer for Gboard
-We created this trainer to make learning Morse code more fun. Give it a try once you’ve set up [Morse code for Gboard](https://support.google.com/accessibility/android/answer/9011881) and are ready to get started learning Morse.
+This is a fork of the original [Google/Tania Finlayson Morse code trainer](https://github.com/googlecreativelab/morse-learn). Adapted to help people with a visual impairment - but also because many people prefer Auditory Mnemoics better than visual ones for learning morse code.
 
-This experiment is part of a larger project to support Morse code for more accessible communication.
+Main differences:
+
+- Uses auditory cues - for correct/wrong and auditory mnemoic hints
+- Fixes a lot of problems with the original about not running in different browsers. The demo didn't reliably detect browsers/platforms.
+
+*Use with a dot and dash keyboard keys - or map switches to these keys*
 
 Learn More at [g.co/morse](http://g.co/morse).<br>
 Built using [Phaser.js](https://phaser.io).
 
 ## Usage
 ```
-yarn; // install dependencies
-yarn start; // start the local budo webserver
-yarn build; // prep files for production
+npm install; // install dependencies
+npm run start; // start the local budo webserver
+npm install && npm rebuild node-sass && npm run browserify && npm run sass
+; // run for production
 ```
 
 ## Contributors
-Made by Tania Finlayson and [Use All Five](https://useallfive.com) with friends at the Google Creative Lab in collaboration.
+Originally made by Tania Finlayson and [Use All Five](https://useallfive.com) with friends at the Google Creative Lab in collaboration. This fork was made by the [Ace Centre](https://acecentre.org.uk)
 
 This is not an officially supported Google product.
 
