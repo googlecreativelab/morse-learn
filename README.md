@@ -14,13 +14,13 @@ Built using [Phaser.js](https://phaser.io).
 ## Usage
 ```
 npm install; // install dependencies
-npm run start; // start the local budo webserver
+npm run start; // start the local webserver
 npm install && npm rebuild node-sass && npm run browserify && npm run sass
 ; // run for production
 ```
 
 ## Contributors
-Originally made by Tania Finlayson and [Use All Five](https://useallfive.com) with friends at the Google Creative Lab in collaboration. This fork was made by the [Ace Centre](https://acecentre.org.uk)
+Originally made by Tania Finlayson and [Use All Five](https://useallfive.com) with friends at the Google Creative Lab in collaboration. This fork was made by the [Ace Centre](https://acecentre.org.uk). [Matthew Wade](https://www.matthewwade.net), Actor & Voice over artist, Kindly created the "soundsalike" sounds.
 
 This is not an officially supported Google product.
 

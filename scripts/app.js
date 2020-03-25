@@ -155,9 +155,9 @@ class App {
     // letters + soundalike list
     for (let letter of config.letters) {
       this.game.load.audio('letter-' + letter, 'assets/sounds/' + letter + '.mp3');
-      this.game.load.audio('soundalike-letter-' + letter, 'assets/sounds/soundalikes-ww/' + letter + '.mp3');
+      this.game.load.audio('soundalike-letter-' + letter, 'assets/sounds/soundalikes-mw/' + letter + '.mp3');
     }
-    // correct, wrong 
+    // correct, wrong
     this.game.load.audio('correct', 'assets/sounds/correct.mp3');
     this.game.load.audio('wrong', 'assets/sounds/wrong.mp3');
   }

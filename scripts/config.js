@@ -74,8 +74,8 @@ const config = {
   },
   emulator: {
     keysMap: {
-      period: [ '.' ],
-      dash: [ '-' ],
+      period: [ '.', 'j', '13', '74' ],
+      dash: [ '-', 'k','32', '75' ],
     },
     finalizeTimeout: 1500,
   },
