@@ -3,6 +3,13 @@ $fa-font-path: "../webfonts";
 @import "./fontawesome/solid.scss";
 @import "./fontawesome/regular.scss";
 
+// spinkit
+@import "../node_modules/spinkit/spinkit.css";
+
+:root {
+  --sk-size: 100px;
+  --sk-color: rgb(223, 223, 223);
+}
 
 $beige: #F1E4D4;
 $red: #EF4136;
@@ -114,6 +121,39 @@ input {
   &.open {
     opacity: 1;
     visibility: visible;
+  }
+}
+
+// loading overlay
+#loading-overlay {
+  background-color: $red;
+  height: 100%;
+  left: 0;
+  opacity: 0;
+  overflow-y: scroll;
+  position: absolute;
+  top: 0;
+  transition: all 0.5s;
+  width: 100%;
+  visibility: hidden;
+  -webkit-overflow-scrolling: scroll;
+  z-index: 1;
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .content {
+    color: rgba($black, 0.4);
+    font-size: 30px;
+
+    display: flex;
+    height: 100%;
+    flex-grow: 1;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
   }
 }
 
