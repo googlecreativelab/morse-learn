@@ -4,7 +4,7 @@ $fa-font-path: "../webfonts";
 @import "./fontawesome/regular.scss";
 
 // spinkit
-@import "../node_modules/spinkit/spinkit.css";
+@import "../node_modules/spinkit/spinkit";
 
 :root {
   --sk-size: 100px;
