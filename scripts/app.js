@@ -101,6 +101,8 @@ class App {
   }
 
   create() {
+    GameApp.enableLoadingModal(false)
+
     this.game.stage.backgroundColor = config.app.backgroundColor;
     this.game.stage.smoothed = config.app.smoothed;
     GameApp.determineScale();
@@ -115,6 +117,8 @@ class App {
   }
 
   preload() {
+    GameApp.enableLoadingModal()
+
     // Images
     this.game.load.image('a', 'assets/images/png/Archery.png');
     this.game.load.image('b', 'assets/images/png/Banjo.png');
@@ -172,6 +176,16 @@ class App {
       window.location.hash = '';
       document.getElementById('button').innerHTML = '?';
       document.getElementById('overlay').classList.remove('open');
+    }
+  }
+
+  // show loading modal
+  enableLoadingModal(show = true) {
+    const modalId = 'loading-overlay'
+    if (show) {
+      document.getElementById(modalId).classList.add('open')
+    } else {
+      document.getElementById(modalId).classList.remove('open')
     }
   }
 }

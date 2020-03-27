@@ -66,6 +66,7 @@
   },
   "dependencies": {
     "lodash": "^4.17.5",
-    "natives": "^1.1.6"
+    "natives": "^1.1.6",
+    "spinkit": "^2.0.1"
   }
 }
