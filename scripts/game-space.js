@@ -180,8 +180,7 @@ class GameSpace {
 
     // Animate stuff immediately when first starting
     this.game.add.tween(word.pills[0].scale).to({ x: 1, y: 1 }, 250, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_START_DELAY);
-    this.game.add.tween(word.pills[0]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
-    this.game.add.tween(word.letterObjects[0]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
+    word.pushUp(0);
     word.letterObjects[0].addColor('#F1E4D4', 0);
     word.letterObjects[0].alpha = 1;
 

@@ -134,11 +134,13 @@ class Word {
 
   async updateHint(textOnly) {
     if (this.hints.length !== 0) {
-      await delay(((!textOnly) ? config.animations.SLIDE_END_DELAY + 400 : 0));
       if (textOnly) {
         this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
       } else {
-        this.game.add.tween(this.hints[this.currentLetterIndex].image).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
+        await delay(config.animations.SLIDE_END_DELAY + 400);
+        if (this.game.have_visual_cues) {
+          this.game.add.tween(this.hints[this.currentLetterIndex].image).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
+        }
         this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
         // Play the sounds when hint image shows
         await this.playSounds(this.letterObjects[this.currentLetterIndex]);
@@ -178,7 +180,7 @@ class Word {
   }
 
   pushUp(i) {
-    if (this.parent.letterScoreDict[this.myLetters[i]] < config.app.LEARNED_THRESHOLD) {
+    if (this.parent.letterScoreDict[this.myLetters[i]] < config.app.LEARNED_THRESHOLD && this.game.have_visual_cues) {
       this.game.add.tween(this.letterObjects[i]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
       this.game.add.tween(this.pills[i]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
     }
