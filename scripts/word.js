@@ -169,7 +169,7 @@ class Word {
   }
 
   setStyle(i) {
-    this.applyHint(i);
+    this.pushUp(i);
     this.game.add.tween(this.letterObjects[i]).to({ alpha: 1 }, 200, Phaser.Easing.Linear.Out, true, config.animations.SLIDE_END_DELAY + 200);
 
     setTimeout(() => {
@@ -177,7 +177,7 @@ class Word {
     }, config.animations.SLIDE_END_DELAY + 200);
   }
 
-  applyHint(i) {
+  pushUp(i) {
     if (this.parent.letterScoreDict[this.myLetters[i]] < config.app.LEARNED_THRESHOLD) {
       this.game.add.tween(this.letterObjects[i]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
       this.game.add.tween(this.pills[i]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);

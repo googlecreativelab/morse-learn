@@ -324,7 +324,7 @@ class GameSpace {
           await delay(300);
           await this.playLetterSoundAlike(letter);
         }
-        word.applyHint(word.currentLetterIndex);
+        word.pushUp(word.currentLetterIndex);
       }
       this.parent.header.updateProgressLights(this.letterScoreDict, theLetterIndex);
     } else {
@@ -363,7 +363,7 @@ class GameSpace {
             await delay(300);
             await this.playLetterSoundAlike(letter);
           }
-          word.applyHint(word.currentLetterIndex);
+          word.pushUp(word.currentLetterIndex);
         }
       }
     }
