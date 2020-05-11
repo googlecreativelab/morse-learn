@@ -186,10 +186,7 @@ class GameSpace {
 
     // await delay(config.animations.SLIDE_END_DELAY + 800);
     word.setStyle(0);
-    if (this.game.have_speech_assistive) {
-      // play the letter again
-      await this.playLetter(letter);
-    }
+    await this.playLetter(letter);
     await word.updateHint();
     if (this.game.have_speech_assistive) {
       await delay(300);
@@ -312,10 +309,7 @@ class GameSpace {
       let theLetterIndex = this.newLetterArray.indexOf(typedLetter);
 
       this.slideLetters();
-      if (this.game.have_speech_assistive) {
-        // play the letter again
-        await this.playLetter(letter);
-      }
+      await this.playLetter(letter);
       if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
         this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
         await word.updateHint();
@@ -345,10 +339,7 @@ class GameSpace {
         this.letterScoreDict[letter] = -config.app.LEARNED_THRESHOLD - 2;
       }
 
-      if (this.game.have_speech_assistive) {
-        // play the letter again
-        await this.playLetter(letter);
-      }
+      await this.playLetter(letter);
       if (!letterMistake) {
         letterMistake = true;
 
@@ -383,7 +374,7 @@ class GameSpace {
 
   async playLetter(letter) {
     let audio = this.parent.sounds['letter-' + letter];
-    if (audio) {
+    if (this.game.have_speech_assistive && audio) {
       let tmp = audio.play();
       let timeout = tmp.totalDuration || 1;
       await delay(timeout * 1000);
