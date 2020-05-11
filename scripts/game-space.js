@@ -188,10 +188,7 @@ class GameSpace {
     word.setStyle(0);
     await this.playLetter(letter);
     await word.updateHint();
-    if (this.game.have_speech_assistive) {
-      await delay(300);
-      await this.playLetterSoundAlike(letter);
-    }
+    await this.playLetterSoundAlike(letter);
     this.inputReady = true;
   }
 
@@ -313,10 +310,7 @@ class GameSpace {
       if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
         this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
         await word.updateHint();
-        if (this.game.have_speech_assistive) {
-          await delay(300);
-          await this.playLetterSoundAlike(letter);
-        }
+        await this.playLetterSoundAlike(letter);
         word.pushUp(word.currentLetterIndex);
       }
       this.parent.header.updateProgressLights(this.letterScoreDict, theLetterIndex);
@@ -349,10 +343,7 @@ class GameSpace {
 
         if (this.mistakeCount === 4) {
           await word.updateHint();
-          if (this.game.have_speech_assistive) {
-            await delay(300);
-            await this.playLetterSoundAlike(letter);
-          }
+          await this.playLetterSoundAlike(letter);
           word.pushUp(word.currentLetterIndex);
         }
       }
@@ -383,7 +374,8 @@ class GameSpace {
 
   async playLetterSoundAlike(letter) {
     let audio = this.parent.sounds['soundalike-letter-' + letter];
-    if (audio) {
+    if (this.game.have_speech_assistive && audio) {
+      await delay(300);
       let tmp = audio.play();
       let timeout = tmp.totalDuration || 1;
       await delay(timeout * 1000);
