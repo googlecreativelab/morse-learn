@@ -87,6 +87,9 @@ class GameSpace {
     this.newLetterArray.sort();
     this.loadLetters();
 
+    this.period = this.parent.sounds.period;
+    this.dash = this.parent.sounds.dash;
+
     let inpelm = document.getElementById('input');
     inpelm.value = '';
     if (!this.game.device.desktop && this.game.device.android) {
@@ -375,6 +378,31 @@ class GameSpace {
       let tmp = audio.play();
       let timeout = tmp.totalDuration || 1;
       await delay(timeout * 1000);
+    }
+  }
+
+  /**
+   * Play the letter in Morse code.
+   *
+   * @param {Letter} letter - The current letter.
+   *
+   * @returns {Promise<void>}
+   */
+  async playMorse(letter) {
+    if (!this.game.have_audio) {
+      return;
+    }
+    for (let i = 0; i < letter.morse.length; i++) {
+      let tmp;
+      if (letter.morse[i] === '\u002D') {
+        tmp = this.dash.play();
+      } else if (letter.morse[i] === '\u002E') {
+        tmp = this.period.play();
+      }
+      await delay(300);
+      if (tmp) {
+        await delay(Math.min(0.601, tmp.totalDuration) * 1000)
+      }
     }
   }
 

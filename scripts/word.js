@@ -140,26 +140,6 @@ class Word {
     }
   }
 
-  // Play individual dots/dash sound
-  // Using 601ms for the delay between each sound because thats the dash duration
-  // Which is the longest duration of the sounds
-  async playSounds(letter) {
-    if (!this.game.have_audio) {
-      return;
-    }
-    for (let i = 0; i < letter.morse.length; i++) {
-      let tmp;
-      if (letter.morse[i] === '\u002D') {
-        tmp = this.dash.play();
-      } else if (letter.morse[i] === '\u002E') {
-        tmp = this.period.play();
-      }
-      if (tmp) {
-        await delay(Math.min(0.601, tmp.totalDuration) * 1000)
-      }
-    }
-  }
-
   setStyle(i) {
     this.pushUp(i);
     this.game.add.tween(this.letterObjects[i]).to({ alpha: 1 }, 200, Phaser.Easing.Linear.Out, true, config.animations.SLIDE_END_DELAY + 200);
