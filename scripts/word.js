@@ -75,7 +75,6 @@ class Word {
       letter.alpha = 0.2;
       letter.morse = this.parent.parent.morseDictionary[this.myLetters[i]];
       letter.fill = '#000000';
-      letter.hasMistake = false;
       this.letterObjects.push(letter);
 
       let hint = this.game.add.sprite(config.app.wordBrickSize, config.GLOBALS.worldCenter + 50, 'e');

@@ -25,7 +25,6 @@ class GameSpace {
     this.currentLettersInPlay = [];
     this.currentWords = [];
     this.currentWordIndex = 0;
-    this.hasMistake = false;
     this.mistakeCount = 0;
     this.consecutiveCorrect = 0;
     this.inputReady = false;
@@ -318,7 +317,6 @@ class GameSpace {
       this.mistakeCount++;
       this.consecutiveCorrect = 0;
 
-      let letterMistake = word.letterObjects[word.currentLetterIndex].hasMistake;
       this.letterScoreDict[letter] -= 1;
       word.shake(word.currentLetterIndex);
       // console.log('not a match: ' + typedLetter + ' ' + letter);
@@ -334,8 +332,6 @@ class GameSpace {
       }
 
       await this.playLetter(letter);
-      if (!letterMistake) {
-        letterMistake = true;
 
         if (this.mistakeCount === 3) {
           await word.updateHint(true);
@@ -346,7 +342,6 @@ class GameSpace {
           await this.playLetterSoundAlike(letter);
           word.pushUp(word.currentLetterIndex);
         }
-      }
     }
     this.inputReady = true;
   }
