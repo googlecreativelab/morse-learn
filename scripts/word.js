@@ -26,6 +26,7 @@ class Word {
 
   create(morseVisible, myWord) {
     this.myLetters = [];
+    /** @type {Array<Letter>} */
     this.letterObjects = [];
     this.hints = [];
     this.pills = [];
@@ -37,6 +38,11 @@ class Word {
     for (let i = 0; i < this.myLength; i++) {
       this.myLetters.push(myWord[i])
     }
+  }
+
+  /** @returns {Letter} */
+  getCurrentLetter() {
+    return this.letterObjects[this.currentLetterIndex];
   }
 
   setPosition(startX) {
@@ -65,7 +71,14 @@ class Word {
       circle.endFill();
       this.pills.push(circle);
 
-      // Letter
+      /**
+       * A game letter.
+       *
+       * @typedef {Phaser.Text} Letter
+       *
+       * @property {string} letter - The lowercase letter.
+       * @property {string} morse - The letter in Morse code.
+       */
       let letter = this.game.add.text(startX + (i * config.app.wordBrickSize), config.GLOBALS.worldCenter, this.myLetters[i].toUpperCase());
       letter.font = config.typography.font;
       letter.fontWeight = 600;
@@ -75,6 +88,7 @@ class Word {
       letter.alpha = 0.2;
       letter.morse = this.parent.parent.morseDictionary[this.myLetters[i]];
       letter.fill = '#000000';
+      letter.letter = this.myLetters[i];
       this.letterObjects.push(letter);
 
       let hint = this.game.add.sprite(config.app.wordBrickSize, config.GLOBALS.worldCenter + 50, 'e');

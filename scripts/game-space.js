@@ -23,6 +23,7 @@ class GameSpace {
   constructor(game) {
     this.parent = null;
     this.currentLettersInPlay = [];
+    /** @type {Array<Word>} */
     this.currentWords = [];
     this.currentWordIndex = 0;
     this.mistakeCount = 0;
@@ -191,7 +192,7 @@ class GameSpace {
     await this.playLetter(letter);
     if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
       await word.showHint();
-      await this.playLetterSoundAlike(letter);
+      await this.playHints(word.getCurrentLetter());
     }
     this.inputReady = true;
   }
@@ -313,8 +314,7 @@ class GameSpace {
       await this.playLetter(letter);
       if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
         await word.showHint();
-        await this.playLetterSoundAlike(letter);
-        word.pushUp(word.currentLetterIndex);
+        await this.playHints(word.getCurrentLetter());
       }
       this.parent.header.updateProgressLights(this.letterScoreDict, theLetterIndex);
     } else {
@@ -336,18 +336,32 @@ class GameSpace {
       }
 
       await this.playLetter(letter);
-
-        if (this.mistakeCount === 3) {
-          await word.showHint();
-        }
-
-        if (this.mistakeCount === 4) {
-          await word.showHint();
-          await this.playLetterSoundAlike(letter);
-          word.pushUp(word.currentLetterIndex);
-        }
+      await word.showHint();
+      await this.playHints(word.getCurrentLetter(), this.mistakeCount);
     }
     this.inputReady = true;
+  }
+
+  /**
+   * Play the audio hints.
+   *
+   * @param {Letter} letter - The current letter.
+   * @param {number} attempts - The number of failed attempts for the
+   *   current turn.
+   *
+   * @returns {Promise<void>}
+   */
+  async playHints(letter, attempts = 0) {
+    if (attempts % 4 === 0) {
+      await this.playMorse(letter);
+      await this.playLetterSoundAlike(letter);
+    } else if (attempts % 4 === 1) {
+      // No audio hint.
+    } else if (attempts % 4 === 2) {
+      await this.playMorse(letter);
+    } else if (attempts % 4 === 3) {
+      await this.playLetterSoundAlike(letter);
+    }
   }
 
   async playWrong() {
@@ -368,11 +382,20 @@ class GameSpace {
       let tmp = audio.play();
       let timeout = tmp.totalDuration || 1;
       await delay(timeout * 1000);
+    } else {
+      await delay(750);
     }
   }
 
+  /**
+   * Play a letter's mnemonic.
+   *
+   * @param {Letter} letter - The current letter.
+   *
+   * @returns {Promise<void>}
+   */
   async playLetterSoundAlike(letter) {
-    let audio = this.parent.sounds['soundalike-letter-' + letter];
+    let audio = this.parent.sounds['soundalike-letter-' + letter.letter];
     if (this.game.have_speech_assistive && audio) {
       await delay(300);
       let tmp = audio.play();
