@@ -307,7 +307,6 @@ class GameSpace {
       this.slideLetters();
       await this.playLetter(letter);
       if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
-        this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
         await word.updateHint();
         await this.playLetterSoundAlike(letter);
         word.pushUp(word.currentLetterIndex);
