@@ -186,8 +186,10 @@ class GameSpace {
     // await delay(config.animations.SLIDE_END_DELAY + 800);
     word.setStyle(0);
     await this.playLetter(letter);
-    await word.showHint();
-    await this.playLetterSoundAlike(letter);
+    if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
+      await word.showHint();
+      await this.playLetterSoundAlike(letter);
+    }
     this.inputReady = true;
   }
 
