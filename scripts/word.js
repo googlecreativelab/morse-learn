@@ -131,21 +131,12 @@ class Word {
     });
   }
 
-  async updateHint(textOnly) {
+  async showHint() {
     if (this.hints.length !== 0) {
-      if (textOnly) {
-        this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-      } else {
-        await delay(config.animations.SLIDE_END_DELAY + 400);
-        if (this.game.have_visual_cues) {
-          this.game.add.tween(this.hints[this.currentLetterIndex].image).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-        }
-        this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-        // Play the sounds when hint image shows
-        await this.playSounds(this.letterObjects[this.currentLetterIndex]);
+      await delay(config.animations.SLIDE_END_DELAY + 400);
+      if (this.game.have_visual_cues) {
+        this.game.add.tween(this.hints[this.currentLetterIndex].image).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
       }
-
-      this.game.add.tween(this.hints[this.currentLetterIndex].underline).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
     }
   }
 

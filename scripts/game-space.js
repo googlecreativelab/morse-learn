@@ -186,7 +186,7 @@ class GameSpace {
     // await delay(config.animations.SLIDE_END_DELAY + 800);
     word.setStyle(0);
     await this.playLetter(letter);
-    await word.updateHint();
+    await word.showHint();
     await this.playLetterSoundAlike(letter);
     this.inputReady = true;
   }
@@ -307,7 +307,7 @@ class GameSpace {
       this.slideLetters();
       await this.playLetter(letter);
       if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
-        await word.updateHint();
+        await word.showHint();
         await this.playLetterSoundAlike(letter);
         word.pushUp(word.currentLetterIndex);
       }
@@ -333,11 +333,11 @@ class GameSpace {
       await this.playLetter(letter);
 
         if (this.mistakeCount === 3) {
-          await word.updateHint(true);
+          await word.showHint();
         }
 
         if (this.mistakeCount === 4) {
-          await word.updateHint();
+          await word.showHint();
           await this.playLetterSoundAlike(letter);
           word.pushUp(word.currentLetterIndex);
         }
