@@ -1,4 +1,4 @@
-# Morse Typing Trainer for Gboard
+# Morse Typing Trainer
 This is a fork of the original [Google/Tania Finlayson Morse code trainer](https://github.com/googlecreativelab/morse-learn). Adapted to help people with a visual impairment - but also because many people prefer Auditory Mnemoics better than visual ones for learning morse code.
 
 Main differences:
