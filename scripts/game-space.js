@@ -335,6 +335,7 @@ class GameSpace {
         this.letterScoreDict[letter] = -config.app.LEARNED_THRESHOLD - 2;
       }
 
+      await word.setStyle(word.currentLetterIndex);
       await this.playLetter(letter);
       await word.showHint();
       await this.playHints(word.getCurrentLetter(), this.mistakeCount);
