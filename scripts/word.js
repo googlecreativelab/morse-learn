@@ -26,6 +26,7 @@ class Word {
 
   create(morseVisible, myWord) {
     this.myLetters = [];
+    /** @type {Array<Letter>} */
     this.letterObjects = [];
     this.hints = [];
     this.pills = [];
@@ -37,6 +38,11 @@ class Word {
     for (let i = 0; i < this.myLength; i++) {
       this.myLetters.push(myWord[i])
     }
+  }
+
+  /** @returns {Letter} */
+  getCurrentLetter() {
+    return this.letterObjects[this.currentLetterIndex];
   }
 
   setPosition(startX) {
@@ -65,7 +71,14 @@ class Word {
       circle.endFill();
       this.pills.push(circle);
 
-      // Letter
+      /**
+       * A game letter.
+       *
+       * @typedef {Phaser.Text} Letter
+       *
+       * @property {string} letter - The lowercase letter.
+       * @property {string} morse - The letter in Morse code.
+       */
       let letter = this.game.add.text(startX + (i * config.app.wordBrickSize), config.GLOBALS.worldCenter, this.myLetters[i].toUpperCase());
       letter.font = config.typography.font;
       letter.fontWeight = 600;
@@ -75,7 +88,7 @@ class Word {
       letter.alpha = 0.2;
       letter.morse = this.parent.parent.morseDictionary[this.myLetters[i]];
       letter.fill = '#000000';
-      letter.hasMistake = false;
+      letter.letter = this.myLetters[i];
       this.letterObjects.push(letter);
 
       let hint = this.game.add.sprite(config.app.wordBrickSize, config.GLOBALS.worldCenter + 50, 'e');
@@ -132,40 +145,11 @@ class Word {
     });
   }
 
-  async updateHint(textOnly) {
+  async showHint() {
     if (this.hints.length !== 0) {
-      if (textOnly) {
-        this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-      } else {
-        await delay(config.animations.SLIDE_END_DELAY + 400);
-        if (this.game.have_visual_cues) {
-          this.game.add.tween(this.hints[this.currentLetterIndex].image).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-        }
-        this.game.add.tween(this.hints[this.currentLetterIndex].text).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-        // Play the sounds when hint image shows
-        await this.playSounds(this.letterObjects[this.currentLetterIndex]);
-      }
-
-      this.game.add.tween(this.hints[this.currentLetterIndex].underline).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
-    }
-  }
-
-  // Play individual dots/dash sound
-  // Using 601ms for the delay between each sound because thats the dash duration
-  // Which is the longest duration of the sounds
-  async playSounds(letter) {
-    if (!this.game.have_audio) {
-      return;
-    }
-    for (let i = 0; i < letter.morse.length; i++) {
-      let tmp;
-      if (letter.morse[i] === '\u002D') {
-        tmp = this.dash.play();
-      } else if (letter.morse[i] === '\u002E') {
-        tmp = this.period.play();
-      }
-      if (tmp) {
-        await delay(Math.min(0.601, tmp.totalDuration) * 1000)
+      await delay(config.animations.SLIDE_END_DELAY + 400);
+      if (this.game.have_visual_cues) {
+        this.game.add.tween(this.hints[this.currentLetterIndex].image).to({ alpha: 1 }, 200, Phaser.Easing.Linear.In, true);
       }
     }
   }
