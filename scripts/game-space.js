@@ -23,9 +23,9 @@ class GameSpace {
   constructor(game) {
     this.parent = null;
     this.currentLettersInPlay = [];
+    /** @type {Array<Word>} */
     this.currentWords = [];
     this.currentWordIndex = 0;
-    this.hasMistake = false;
     this.mistakeCount = 0;
     this.consecutiveCorrect = 0;
     this.inputReady = false;
@@ -87,6 +87,9 @@ class GameSpace {
     this.newLetterArray = this.parent.lettersToLearn.slice(0);
     this.newLetterArray.sort();
     this.loadLetters();
+
+    this.period = this.parent.sounds.period;
+    this.dash = this.parent.sounds.dash;
 
     let inpelm = document.getElementById('input');
     inpelm.value = '';
@@ -180,21 +183,16 @@ class GameSpace {
 
     // Animate stuff immediately when first starting
     this.game.add.tween(word.pills[0].scale).to({ x: 1, y: 1 }, 250, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_START_DELAY);
-    this.game.add.tween(word.pills[0]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
-    this.game.add.tween(word.letterObjects[0]).to({ y: config.GLOBALS.worldTop }, 400, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
+    word.pushUp(0);
     word.letterObjects[0].addColor('#F1E4D4', 0);
     word.letterObjects[0].alpha = 1;
 
     // await delay(config.animations.SLIDE_END_DELAY + 800);
     word.setStyle(0);
-    if (this.game.have_speech_assistive) {
-      // play the letter again
-      await this.playLetter(letter);
-    }
-    await word.updateHint();
-    if (this.game.have_speech_assistive) {
-      await delay(300);
-      await this.playLetterSoundAlike(letter);
+    await this.playLetter(letter);
+    if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
+      await word.showHint();
+      await this.playHints(word.getCurrentLetter());
     }
     this.inputReady = true;
   }
@@ -313,25 +311,16 @@ class GameSpace {
       let theLetterIndex = this.newLetterArray.indexOf(typedLetter);
 
       this.slideLetters();
-      if (this.game.have_speech_assistive) {
-        // play the letter again
-        await this.playLetter(letter);
-      }
+      await this.playLetter(letter);
       if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
-        this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
-        await word.updateHint();
-        if (this.game.have_speech_assistive) {
-          await delay(300);
-          await this.playLetterSoundAlike(letter);
-        }
-        word.applyHint(word.currentLetterIndex);
+        await word.showHint();
+        await this.playHints(word.getCurrentLetter());
       }
       this.parent.header.updateProgressLights(this.letterScoreDict, theLetterIndex);
     } else {
       this.mistakeCount++;
       this.consecutiveCorrect = 0;
 
-      let letterMistake = word.letterObjects[word.currentLetterIndex].hasMistake;
       this.letterScoreDict[letter] -= 1;
       word.shake(word.currentLetterIndex);
       // console.log('not a match: ' + typedLetter + ' ' + letter);
@@ -346,28 +335,34 @@ class GameSpace {
         this.letterScoreDict[letter] = -config.app.LEARNED_THRESHOLD - 2;
       }
 
-      if (this.game.have_speech_assistive) {
-        // play the letter again
-        await this.playLetter(letter);
-      }
-      if (!letterMistake) {
-        letterMistake = true;
-
-        if (this.mistakeCount === 3) {
-          await word.updateHint(true);
-        }
-
-        if (this.mistakeCount === 4) {
-          await word.updateHint();
-          if (this.game.have_speech_assistive) {
-            await delay(300);
-            await this.playLetterSoundAlike(letter);
-          }
-          word.applyHint(word.currentLetterIndex);
-        }
-      }
+      await word.setStyle(word.currentLetterIndex);
+      await this.playLetter(letter);
+      await word.showHint();
+      await this.playHints(word.getCurrentLetter(), this.mistakeCount);
     }
     this.inputReady = true;
+  }
+
+  /**
+   * Play the audio hints.
+   *
+   * @param {Letter} letter - The current letter.
+   * @param {number} attempts - The number of failed attempts for the
+   *   current turn.
+   *
+   * @returns {Promise<void>}
+   */
+  async playHints(letter, attempts = 0) {
+    if (attempts % 4 === 0) {
+      await this.playMorse(letter);
+      await this.playLetterSoundAlike(letter);
+    } else if (attempts % 4 === 1) {
+      // No audio hint.
+    } else if (attempts % 4 === 2) {
+      await this.playMorse(letter);
+    } else if (attempts % 4 === 3) {
+      await this.playLetterSoundAlike(letter);
+    }
   }
 
   async playWrong() {
@@ -384,19 +379,54 @@ class GameSpace {
 
   async playLetter(letter) {
     let audio = this.parent.sounds['letter-' + letter];
-    if (audio) {
+    if (this.game.have_speech_assistive && audio) {
+      let tmp = audio.play();
+      let timeout = tmp.totalDuration || 1;
+      await delay(timeout * 1000);
+    } else {
+      await delay(750);
+    }
+  }
+
+  /**
+   * Play a letter's mnemonic.
+   *
+   * @param {Letter} letter - The current letter.
+   *
+   * @returns {Promise<void>}
+   */
+  async playLetterSoundAlike(letter) {
+    let audio = this.parent.sounds['soundalike-letter-' + letter.letter];
+    if (this.game.have_speech_assistive && audio) {
+      await delay(300);
       let tmp = audio.play();
       let timeout = tmp.totalDuration || 1;
       await delay(timeout * 1000);
     }
   }
 
-  async playLetterSoundAlike(letter) {
-    let audio = this.parent.sounds['soundalike-letter-' + letter];
-    if (audio) {
-      let tmp = audio.play();
-      let timeout = tmp.totalDuration || 1;
-      await delay(timeout * 1000);
+  /**
+   * Play the letter in Morse code.
+   *
+   * @param {Letter} letter - The current letter.
+   *
+   * @returns {Promise<void>}
+   */
+  async playMorse(letter) {
+    if (!this.game.have_audio) {
+      return;
+    }
+    for (let i = 0; i < letter.morse.length; i++) {
+      let tmp;
+      if (letter.morse[i] === '\u002D') {
+        tmp = this.dash.play();
+      } else if (letter.morse[i] === '\u002E') {
+        tmp = this.period.play();
+      }
+      await delay(300);
+      if (tmp) {
+        await delay(Math.min(0.601, tmp.totalDuration) * 1000)
+      }
     }
   }
 
