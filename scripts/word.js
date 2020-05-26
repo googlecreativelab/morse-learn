@@ -79,7 +79,8 @@ class Word {
        * @property {string} letter - The lowercase letter.
        * @property {string} morse - The letter in Morse code.
        */
-      let letter = this.game.add.text(startX + (i * config.app.wordBrickSize), config.GLOBALS.worldCenter, this.myLetters[i].toUpperCase());
+      let name = this.parent.parent.course.getLetterName(this.myLetters[i]);
+      let letter = this.game.add.text(startX + (i * config.app.wordBrickSize), config.GLOBALS.worldCenter, name.toUpperCase());
       letter.font = config.typography.font;
       letter.fontWeight = 600;
       letter.fontSize = config.app.wordLetterSize;
@@ -88,11 +89,11 @@ class Word {
       letter.alpha = 0.2;
       letter.morse = this.parent.parent.morseDictionary[this.myLetters[i]];
       letter.fill = '#000000';
-      letter.letter = this.myLetters[i];
+      letter.letter = name;
       this.letterObjects.push(letter);
 
       let hint = this.game.add.sprite(config.app.wordBrickSize, config.GLOBALS.worldCenter + 50, 'e');
-      hint.loadTexture(this.myLetters[i]);
+      hint.loadTexture(name);
       hint.anchor.set(0.5, 0);
       hint.scale.set(config.hints.hintSize);
       hint.alpha = 0;

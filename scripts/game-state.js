@@ -19,8 +19,8 @@ import * as config from './config';
 
 class GameState {
 
-  constructor(game) {
-    this.lettersToLearn = ['e', 't', 'a', 'i', 'm', 's', 'o', 'h', 'n', 'c', 'r', 'd', 'u', 'k', 'l', 'f', 'b', 'p', 'g', 'j', 'v', 'q', 'w', 'x', 'y', 'z'];
+  constructor(game, course) {
+   	this.course = course;
     this.letterScoreDict = {};
     this.morseDictionary = englishToMorse;
     this.morseToEnglish = morseToEnglish
@@ -29,7 +29,7 @@ class GameState {
     this.game = game;
     // Setup sounds
     let soundslist = [ 'correct', 'wrong', 'period', 'dash', ];
-    for (let letter of config.letters) {
+    for (let letter of course.letters) {
       soundslist.push('letter-' + letter);
       soundslist.push('soundalike-letter-' + letter);
     }

@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const words = require('./words');
 import { getClientHeight } from './util'
 
 const isTouch = 'ontouchstart' in document.documentElement;
@@ -79,7 +80,24 @@ const config = {
     },
     finalizeTimeout: 1500,
   },
-  letters: ['e', 't', 'a', 'i', 'm', 's', 'o', 'h', 'n', 'c', 'r', 'd', 'u', 'k', 'l', 'f', 'b', 'p', 'g', 'j', 'v', 'q', 'w', 'x', 'y', 'z'],
+  courses: {
+    alphabet: {
+      name: 'Alphabet',
+      headerSpacing: -10,
+      storageKey: 'savedLetters',
+      letters: ['e', 't', 'a', 'i', 'm', 's', 'o', 'h', 'n', 'c', 'r', 'd', 'u', 'k', 'l', 'f', 'b', 'p', 'g', 'j', 'v', 'q', 'w', 'x', 'y', 'z'],
+      words: words
+    },
+    keyboard: {
+      name: 'Keyboard Keys',
+      headerSpacing: 5,
+      storageKey: 'savedKeyboardLetters',
+      letters: {'⎋':'esc','⌦':'del','↦':'tab'},
+      words: ['⎋⎋↦', '⎋↦⎋', '⌦⌦⌦'],
+      assets: 'keyboard'
+    }
+  },
+  course: 'alphabet'
 };
 
 module.exports = config;
