@@ -134,7 +134,7 @@ class HeaderSpace {
 
   saveLetters(score) {
     if (typeof(Storage) !== 'undefined') {
-      let key = this.parent.course.storagekey;
+      let key = this.parent.course.storageKey;
       localStorage.setItem(key, JSON.stringify(score));
     }
   }
