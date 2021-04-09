@@ -17,8 +17,9 @@ import { morseToEnglish } from './morse-dictionary';
 
 class TitleState {
 
-  constructor(game) {
-    this.lettersToLearn = morseToEnglish;
+  constructor(game, course) {
+    this.course = course;
+    this.lettersToLearn = course.lettersToLearn;
     this.letterScoreDict = {};
     this.hasStarted = false;
     this.game = game;
@@ -134,8 +135,8 @@ class TitleState {
   loadLetters() {
     return new Promise((resolve) => {
       if (typeof(Storage) !== 'undefined') {
-        if (localStorage.savedLetters) {
-          const saved = JSON.parse(localStorage.getItem('savedLetters'));
+        if (localStorage[this.course.storageKey]) {
+          const saved = JSON.parse(localStorage.getItem(this.course.storageKey));
           resolve(saved);
         } else {
           resolve(false);

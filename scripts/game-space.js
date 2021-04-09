@@ -14,7 +14,6 @@
 
 import { Word } from './word';
 let _ = require('lodash');
-const words = require('./words');
 const config = require('./config');
 const delay = require('delay');
 
@@ -46,13 +45,13 @@ class GameSpace {
   }
 
   findAWord() {
-    const shuffled = _.shuffle(words);
+    const shuffled = _.shuffle(this.parent.course.words);
     const newestLetter = this.currentLettersInPlay[this.currentLettersInPlay.length - 1];
     let myWord;
 
     // Check if letters in play has some added already
     if (this.currentLettersInPlay.length < 3) {
-      this.currentLettersInPlay = this.parent.lettersToLearn.slice(0, 3);
+      this.currentLettersInPlay = this.parent.course.lettersToLearn.slice(0, 3);
     }
 
     for (let s = 0; s < shuffled.length; s++) {
@@ -84,7 +83,7 @@ class GameSpace {
 
   create() {
     this.letterScoreDict = this.parent.letterScoreDict;
-    this.newLetterArray = this.parent.lettersToLearn.slice(0);
+    this.newLetterArray = this.parent.course.lettersToLearn.slice(0);
     this.newLetterArray.sort();
     this.loadLetters();
 
@@ -218,7 +217,7 @@ class GameSpace {
 
     // Need to wait for promise for letterScoreDict
     setTimeout(() => {
-      const arrayIntersection = _.intersection(this.currentLettersInPlay, this.parent.lettersToLearn);
+      const arrayIntersection = _.intersection(this.currentLettersInPlay, this.parent.course.lettersToLearn);
 
       for (let i = 0; i < arrayIntersection.length; i++) {
         if (this.letterScoreDict[arrayIntersection[i]] >= config.app.LEARNED_THRESHOLD) {
@@ -237,13 +236,13 @@ class GameSpace {
         let newLength = oldLength + 1;
         this.consecutiveCorrect = 0;
 
-        if (newLength > this.parent.lettersToLearn.length) {
-          while (newLength > this.parent.lettersToLearn.length) {
+        if (newLength > this.parent.course.lettersToLearn.length) {
+          while (newLength > this.parent.course.lettersToLearn.length) {
             newLength--;
           }
         }
 
-        this.currentLettersInPlay = this.parent.lettersToLearn.slice(0, newLength);
+        this.currentLettersInPlay = this.parent.course.lettersToLearn.slice(0, newLength);
       }
     }, 200);
   }
@@ -378,7 +377,8 @@ class GameSpace {
   }
 
   async playLetter(letter) {
-    let audio = this.parent.sounds['letter-' + letter];
+    let name = this.parent.course.getLetterName(letter);
+    let audio = this.parent.sounds['letter-' + name];
     if (this.game.have_speech_assistive && audio) {
       let tmp = audio.play();
       let timeout = tmp.totalDuration || 1;
@@ -396,7 +396,8 @@ class GameSpace {
    * @returns {Promise<void>}
    */
   async playLetterSoundAlike(letter) {
-    let audio = this.parent.sounds['soundalike-letter-' + letter.letter];
+    let name = this.parent.course.getLetterName(letter.letter);
+    let audio = this.parent.sounds['soundalike-letter-' + name];
     if (this.game.have_speech_assistive && audio) {
       await delay(300);
       let tmp = audio.play();

@@ -38,7 +38,11 @@ const morseToEnglish = {
   '.--': 'w',
   '-..-': 'x',
   '-.--': 'y',
-  '--..': 'z'
+  '--..': 'z',
+  '--....': '⎋',
+  '-.--..': '⌦',
+  '---..-.': '↦'
+
 };
 
 const englishToMorse = {
@@ -68,6 +72,9 @@ const englishToMorse = {
   'x': '-..-',
   'y': '-.--',
   'z': '--..',
+  '⎋': '--....',
+  '⌦': '-.--..',
+  '↦': '---..-.'
 };
 
 exports.morseToEnglish = morseToEnglish;

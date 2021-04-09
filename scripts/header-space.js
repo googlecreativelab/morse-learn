@@ -69,11 +69,12 @@ class HeaderSpace {
   }
 
   createLetters() {
-    const lettersToLearn = this.parent.lettersToLearn.slice(0);
+    const spacing = this.parent.course.headerSpacing;
+    const lettersToLearn = this.parent.course.lettersToLearn.slice(0);
     lettersToLearn.sort();
 
     for (let i = 0; i < lettersToLearn.length; i++) {
-      const letter = this.game.add.text(i * (config.header.letterSize - 10), 0, lettersToLearn[i].toUpperCase(), {
+      const letter = this.game.add.text(i * (config.header.letterSize + spacing), 0, lettersToLearn[i].toUpperCase(), {
         align: 'center',
         boundsAlignH: 'center',
         boundsAlignV: 'middle'
@@ -133,7 +134,8 @@ class HeaderSpace {
 
   saveLetters(score) {
     if (typeof(Storage) !== 'undefined') {
-      localStorage.setItem('savedLetters', JSON.stringify(score));
+      let key = this.parent.course.storagekey;
+      localStorage.setItem(key, JSON.stringify(score));
     }
   }
 
@@ -142,7 +144,7 @@ class HeaderSpace {
     if (typeof(Storage) !== 'undefined') {
       const confirm = window.confirm('Are you sure you want to clear your progress? This will restart your current game.');
       if (confirm) {
-        localStorage.removeItem('savedLetters');
+        localStorage.removeItem(this.parent.course.storageKey);
         localStorage.removeItem('intro');
         window.location.reload();
       }

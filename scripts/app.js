@@ -17,6 +17,7 @@ import { IntroState } from './intro-state';
 import { GameState } from './game-state';
 import * as config from './config';
 import { getClientHeight } from './util'
+import { Course } from './course';
 
 class App {
 
@@ -24,6 +25,8 @@ class App {
     this.game = null;
     this.downEvent = null;
     this.modalShow = false;
+
+    this.course = new Course(config.courses[config.course]);
 
     // Handle clicking of modal
     document.getElementById('button').addEventListener('click', () => {
@@ -110,9 +113,9 @@ class App {
     // Show about button
     document.getElementById('button').style.display = 'block';
 
-    this.game.state.add('title', new TitleState(this.game));
+    this.game.state.add('title', new TitleState(this.game, GameApp.course));
     this.game.state.add('intro', new IntroState(this.game));
-    this.game.state.add('game', new GameState(this.game));
+    this.game.state.add('game', new GameState(this.game, GameApp.course));
     this.game.state.start('title');
   }
 
@@ -157,9 +160,11 @@ class App {
     this.game.load.audio('dash', 'assets/sounds/dash.mp3');
 
     // letters + soundalike list
-    for (let letter of config.letters) {
-      this.game.load.audio('letter-' + letter, 'assets/sounds/' + letter + '.mp3');
-      this.game.load.audio('soundalike-letter-' + letter, 'assets/sounds/soundalikes-mw/' + letter + '.mp3');
+    let path = 'assets/' + GameApp.course.assets;
+    for (let letter of GameApp.course.letters) {
+      this.game.load.image(letter, path + 'images/nohint.png');
+      this.game.load.audio('letter-' + letter, path + 'sounds/' + letter + '.mp3');
+      this.game.load.audio('soundalike-letter-' + letter, path + 'sounds/soundalikes-mw/' + letter + '.mp3');
     }
     // correct, wrong
     this.game.load.audio('correct', 'assets/sounds/correct.mp3');
