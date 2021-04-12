@@ -11,8 +11,8 @@ $fa-font-path: "../webfonts";
   --sk-color: rgb(223, 223, 223);
 }
 
-$beige: #F1E4D4;
-$red: #EF4136;
+$beige: #f1e4d4;
+$red: #ef4136;
 $black: #000000;
 
 * {
@@ -26,7 +26,7 @@ html {
 
 html,
 body {
-  font-family: 'Poppins', 'Helvetica', 'Arial', sans-serif;
+  font-family: "Poppins", "Helvetica", "Arial", sans-serif;
   font-weight: 800;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
@@ -64,7 +64,7 @@ input {
 }
 
 #button {
-  color: #F1E4D4;
+  color: #f1e4d4;
   cursor: pointer;
   display: none;
   font-size: 50px;
@@ -92,7 +92,7 @@ input {
   &::after {
     background-color: rgba($black, 0.4);
     border-radius: 50%;
-    content: '';
+    content: "";
     display: block;
     position: absolute;
     top: 29px;
@@ -155,6 +155,67 @@ input {
     justify-content: center;
     align-items: center;
   }
+}
+
+#button-box {
+  background: rgb(230, 231, 232);
+  align-items: flex-end;
+  justify-content: center;
+  display: flex;
+  height: 100%;
+  padding: 15px 20px 25px;
+  width: calc(100% - 40px);
+}
+
+#dot {
+  appearance: none;
+  align-items: center;
+  background: rgb(255, 255, 255);
+  border: none;
+  border-radius: 10px;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  font-size: 7vh;
+  outline: none;
+  margin-right: 10px;
+  max-width: 100%;
+  width: 250px;
+}
+
+#dot > span {
+  display: block;
+  width: 36px;
+  height: 36px;
+  background: #231f20;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+#dash {
+  appearance: none;
+  background: rgb(255, 255, 255);
+  border: none;
+  border-radius: 10px;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  font-size: 7vh;
+  margin-left: 10px;
+  max-width: 100%;
+  outline: none;
+  width: 250px;
+}
+
+#dash > span {
+  display: block;
+  width: 55px;
+  height: 23px;
+  background: #231f20;
+  pointer-events: none;
 }
 
 .title {
