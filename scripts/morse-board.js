@@ -14,9 +14,9 @@ class MorseBoard {
       autoCommit: true,
       debounce: 1e3,
       dashKeyMap: [189, 173, 16, 191],
-      dashSoundPath: "../assets/dash.mp3",
+      dashSoundPath: "../assets/sounds/dash.mp3",
       dotKeyMap: [190],
-      dotSoundPath: "../assets/dot.mp3",
+      dotSoundPath: "../assets/sounds/dot.mp3",
       height: "25vh",
       notification: true,
       notificationDuration: 1e3,
@@ -204,10 +204,10 @@ class MorseBoard {
 
   onClick(e) {
     if (this.config.sounds && !this.detectIE()) {
-      this.dotAudio.pause();
       this.dotAudio.currentTime = 0;
-      this.dashAudio.pause();
       this.dashAudio.currentTime = 0;
+      this.dotAudio.pause();
+      this.dashAudio.pause();
     }
     if (this.config.notificationStyle === "output") {
       if (this.outputStyleTimeout) {
@@ -221,7 +221,7 @@ class MorseBoard {
     }
     var button = e.target.id;
     if (button === "dot") {
-      this.output.value += "•";
+      this.output.value += ".";
       if (this.config.sounds && !this.detectIE()) {
         this.dotAudio.play();
       }
@@ -288,9 +288,7 @@ class MorseBoard {
     var letter = e.detail.letter;
     if (this.config.notification) {
       if (
-        letter &&
-        (typeof letter === "undefined" ? "undefined" : _typeof(letter)) !==
-          undefined
+        letter
       ) {
         this.showNotification(letter);
       } else {
