@@ -82,86 +82,16 @@ class GameSpace {
     this.period = this.parent.sounds.period;
     this.dash = this.parent.sounds.dash;
 
-    const gameSpace = this
 
     this.morseBoard = new MorseBoard({
       debounce: 2e3,
       dashSoundPath: "./assets/sounds/dash.mp3",
       dotSoundPath: "./assets/sounds/dot.mp3",
       notificationStyle: "output",
-      onCommit: function onCommit(e) {
-        gameSpace.checkMatch(e.letter ? e.letter : "");
+      onCommit: (e) =>  {
+        this.checkMatch(e.letter ? e.letter : "");
       },
     });
-
-    let inpelm = document.getElementById("input");
-    inpelm.value = "";
-    if (!this.game.device.desktop && this.game.device.android) {
-      if (document._game_downEvent) {
-        document.removeEventListener("textInput", document._game_downEvent);
-      }
-
-      document._game_downEvent = (e) => {
-        const data = e.data;
-        let typedLetter;
-        if (data === " ") {
-          typedLetter = inpelm.value;
-          typedLetter = typedLetter.trim();
-          typedLetter = typedLetter[typedLetter.length - 1];
-        } else {
-          typedLetter = data;
-        }
-        typedLetter = typedLetter.toLowerCase();
-        if (typeof typedLetter !== "undefined") {
-          this.checkMatch(typedLetter);
-        }
-      };
-      document.addEventListener("textInput", document._game_downEvent);
-    } else {
-      if (document._game_inputEvent) {
-        document.removeEventListener("input", document._game_inputEvent);
-      }
-      if (inpelm._game_onBlur) {
-        inpelm.removeEventListener("blur", inpelm._game_onBlur);
-      }
-      let morseInputTimeout = null;
-      let morseInputs = [];
-      document._game_inputEvent = (evt) => {
-        evt.preventDefault();
-        if (morseInputTimeout != null) {
-          clearTimeout(morseInputTimeout);
-        }
-        morseInputTimeout = setTimeout(() => {
-          morseInputTimeout = null;
-          if (morseInputs.length > 0) {
-            // finalize
-            let letter = this.parent.morseToEnglish[morseInputs.join("")];
-            if (letter) {
-              this.checkMatch(letter);
-            }
-            morseInputs = [];
-          }
-        }, config.emulator.finalizeTimeout);
-        if (config.emulator.keysMap.period.indexOf(evt.data) != -1) {
-          morseInputs.push(".");
-          if (this.game.have_audio) {
-            this.parent.sounds.period.play();
-          }
-        } else if (config.emulator.keysMap.dash.indexOf(evt.data) != -1) {
-          morseInputs.push("-");
-          if (this.game.have_audio) {
-            this.parent.sounds.dash.play();
-          }
-        }
-      };
-      document.addEventListener("input", document._game_inputEvent);
-      inpelm._game_onBlur = () => {
-        setTimeout(() => {
-          inpelm.focus();
-        }, 500);
-      };
-      inpelm.addEventListener("blur", inpelm._game_onBlur);
-    }
 
     setTimeout(() => {
       for (let i = 0; i < config.app.howManyWordsToStart; i++) {
