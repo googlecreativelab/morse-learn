@@ -73,13 +73,6 @@ const config = {
     SLIDE_END_DELAY: 600,
     SLIDE_TRANSITION: 600,
   },
-  emulator: {
-    keysMap: {
-      period: [ '.', 'j', '13', '74' ],
-      dash: [ '-', 'k','32', '75' ],
-    },
-    finalizeTimeout: 1500,
-  },
   courses: {
     alphabet: {
       name: 'Alphabet',
