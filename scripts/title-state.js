@@ -40,8 +40,12 @@ class TitleState {
       this.hasStarted = true;
     }
 
-    document.addEventListener('keydown', () => doStart(), {once: true})
-    
+    document.addEventListener('keydown', () => doStart(), { once: true })
+
+    // This code is pretty flakey, there is probably a cleaner way to do this in phaser
+    const canvas = document.querySelector('canvas')
+    canvas.addEventListener('click', () => doStart(), { once: true })
+  
     let audioToggle = document.querySelector('.audio-toggle')
     let speechToggle = document.querySelector('.speech-toggle')
     document.querySelector('.tl-btn-group').style.display = '';
