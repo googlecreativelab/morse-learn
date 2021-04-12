@@ -82,13 +82,15 @@ class GameSpace {
     this.period = this.parent.sounds.period;
     this.dash = this.parent.sounds.dash;
 
+    const gameSpace = this
+
     this.morseBoard = new MorseBoard({
       debounce: 2e3,
       dashSoundPath: "./assets/sounds/dash.mp3",
       dotSoundPath: "./assets/sounds/dot.mp3",
       notificationStyle: "output",
       onCommit: function onCommit(e) {
-        this.checkMatch(e.letter ? e.letter : "");
+        gameSpace.checkMatch(e.letter ? e.letter : "");
       },
     });
 
