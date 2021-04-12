@@ -13,9 +13,9 @@ class MorseBoard {
     var settings = {
       autoCommit: true,
       debounce: 1e3,
-      dashKeyMap: [189, 173, 16, 191],
+      dashKeyMap: [{ keyCodes: [189, 173], displayText: '-'}, {keyCodes: [16], displayText: 'shift'}, {keyCodes: [191], displayText: '/'}],
       dashSoundPath: "../assets/sounds/dash.mp3",
-      dotKeyMap: [190],
+      dotKeyMap: [{ keyCodes: [190], displayText: '.'}],
       dotSoundPath: "../assets/sounds/dot.mp3",
       height: "25vh",
       notification: true,
@@ -33,118 +33,25 @@ class MorseBoard {
   }
 
   create() {
-    this.background = document.createElement("div");
-    this.background.id = "morseboard";
-    this.background.style.alignItems = "stretch";
-    this.background.style.background = "#E6E7E8";
-    this.background.style.bottom = "0";
+    this.background = document.getElementById("morseboard");
     this.background.style.display = "flex";
-    this.background.style.flexDirection = "column";
     this.background.style.height = this.config.height;
-    this.background.style.left = "0";
-    this.background.style.position = "fixed";
-    this.background.style.width = "100%";
-    document.body.appendChild(this.background);
-    this.output = document.createElement("input");
-    this.output.id = "output";
-    this.output.style.appearance = "none";
-    this.output.style.background = "#E6E7E8";
-    this.output.style.border = "none";
+
+    this.output = document.getElementById("output");
     this.output.style.bottom = this.config.height;
-    this.output.style.color = "#231F20";
-    this.output.style.fontSize = "4vh";
-    this.output.style.fontWeight = "700";
-    this.output.style.padding = "5px 0 0";
-    this.output.style.textAlign = "center";
-    this.output.style.textTransform = "uppercase";
-    this.output.style.width = "100%";
     this.output.style.visibility = this.config.output ? "visible" : "hidden";
-    this.output.style.verticalAlign = "middle";
     this.output.style.pointerEvents = this.config.output ? "auto" : "none";
     this.output.setAttribute("readonly", "true");
     this.output.setAttribute("tabindex", "-1");
-    this.background.appendChild(this.output);
-    this.buttonBox = document.createElement("div");
-    this.buttonBox.id = "button-box";
-    this.buttonBox.style.background = "#E6E7E8";
-    this.buttonBox.style.alignItems = "flex-end";
-    this.buttonBox.style.justifyContent = "center";
-    this.buttonBox.style.display = "flex";
-    this.buttonBox.style.height = "100%";
-    this.buttonBox.style.padding = "15px 20px 25px 20px";
-    this.buttonBox.style.width = "calc(100% - 40px)";
-    this.background.appendChild(this.buttonBox);
-    this.dotButton = document.createElement("button");
-    this.dashButton = document.createElement("button");
-    this.dotButton.id = "dot";
-    this.dotButton.innerHTML =
-      '<span style="display: block; width: 36px; height: 36px; background: #231F20; border-radius: 50%; pointer-events: none;"></span>';
-    this.dotButton.style.appearance = "none";
-    this.dotButton.style.alignItems = "center";
-    this.dotButton.style.background = "#fff";
-    this.dotButton.style.border = "none";
-    this.dotButton.style.borderRadius = "10px";
-    this.dotButton.style.boxShadow = "0px 4px 0px #A1A2A2";
-    this.dotButton.style.display = "flex";
-    this.dotButton.style.justifyContent = "center";
-    this.dotButton.style.height = "100%";
-    this.dotButton.style.fontSize = "7vh";
-    this.dotButton.style.outline = "none";
-    this.dotButton.style.marginRight = "10px";
-    this.dotButton.style.maxWidth = "100%";
-    this.dotButton.style.width = "250px";
+
+    this.buttonBox = document.getElementById("button-box");
+
+    this.dotButton = document.getElementById("dot");
     this.dotButton.setAttribute("tabindex", "0");
-    this.dashButton.id = "dash";
-    this.dashButton.innerHTML =
-      '<span style="display: block; width: 55px; height: 23px; background: #231F20; pointer-events: none;"></span>';
-    this.dashButton.style.appearance = "none";
-    this.dashButton.style.background = "#fff";
-    this.dashButton.style.border = "none";
-    this.dashButton.style.borderRadius = "10px";
-    this.dashButton.style.boxShadow = "0px 4px 0px #A1A2A2";
-    this.dashButton.style.alignItems = "center";
-    this.dashButton.style.display = "flex";
-    this.dashButton.style.justifyContent = "center";
-    this.dashButton.style.height = "100%";
-    this.dashButton.style.fontSize = "7vh";
-    this.dashButton.style.marginLeft = "10px";
-    this.dashButton.style.maxWidth = "100%";
-    this.dashButton.style.outline = "none";
-    this.dashButton.style.width = "250px";
+
+    this.dashButton = document.getElementById("dash");
     this.dashButton.setAttribute("tabindex", "0");
-    this.buttonBox.appendChild(this.dotButton);
-    this.buttonBox.appendChild(this.dashButton);
-    if (
-      this.config.notification &&
-      this.config.notificationStyle === "overlay"
-    ) {
-      var notification = document.createElement("div");
-      notification.id = "notification";
-      notification.style.background = "rgba(0, 0, 0, 0.7)";
-      notification.style.borderRadius = "10px";
-      notification.style.color = "rgba(255, 255, 255, 1)";
-      notification.style.height = !this.detectIE() ? "13vh" : "120px";
-      notification.style.display = "none";
-      notification.style.fontFamily =
-        "Helvetica Neue, Helvetica, Arial, sans-serif";
-      notification.style.fontWeight = "700";
-      notification.style.fontSize = !this.detectIE() ? "10vh" : "75px";
-      notification.style.lineHeight = "normal";
-      notification.style.maxHeight = "150px";
-      notification.style.maxWidth = "150px";
-      notification.style.minHeight = "50px";
-      notification.style.minWidth = "50px";
-      notification.style.padding = "25px";
-      notification.style.position = "absolute";
-      notification.style.transform = "translate3d(-50%, -60%, 0)";
-      notification.style.left = "50%";
-      notification.style.textAlign = "center";
-      notification.style.textTransform = "uppercase";
-      notification.style.top = "60%";
-      notification.style.verticalAlign = "middle";
-      notification.style.width = !this.detectIE() ? "13vh" : "120px";
-      document.body.appendChild(notification);
-    }
+
     if (this.config.sounds && !this.detectIE()) {
       this.dotAudio = document.createElement("audio");
       var dotSource = document.createElement("source");
@@ -165,9 +72,12 @@ class MorseBoard {
       this.dashAudio.appendChild(dashSource);
       document.body.appendChild(this.dashAudio);
     }
+
     window.addEventListener("keydown", this.onKeydown.bind(this), false);
+    
     this.dotButton.addEventListener("click", this.onClick.bind(this), false);
     this.dashButton.addEventListener("click", this.onClick.bind(this), false);
+    
     this.output.addEventListener("commit", this.commit.bind(this), false);
   }
 
