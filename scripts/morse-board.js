@@ -1,7 +1,10 @@
+
+import { morseToEnglish } from './morse-dictionary';
+
 class MorseBoard {
   constructor(options) {
     this.timeout = null;
-    this.morseDictionary = dictionary.morseToEnglish;
+    this.morseDictionary = morseToEnglish;
     this.config = this.mergeSettings(options);
     this.create();
   }
@@ -168,7 +171,7 @@ class MorseBoard {
     this.output.addEventListener("commit", this.commit.bind(this), false);
   }
 
-  onKeyDown(e) {
+  onKeydown(e) {
     var code = e.keyCode;
     if (
       this.config.dotKeyMap.indexOf(code) > -1 &&
@@ -403,3 +406,5 @@ class MorseBoard {
     return false;
   }
 }
+
+module.exports.MorseBoard = MorseBoard
