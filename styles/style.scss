@@ -130,6 +130,42 @@ body {
   width: 100%;
 }
 
+.dot-column, .dash-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 600px) {
+  .dot-column, .dash-column {
+    display: none
+  }
+}
+
+.dot-box, .dash-box {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+
+.keybutton {
+  appearance: none;
+  margin: 8px;
+  background: rgb(255, 255, 255);
+  border: none;
+  border-radius: 10px;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 42px;
+  font-size: 32px;
+  margin-left: 10px;
+  max-width: 100%;
+  outline: none;
+  width: 64px;
+}
+
 // Fallback for landscape
 #landscape {
   color: $beige;

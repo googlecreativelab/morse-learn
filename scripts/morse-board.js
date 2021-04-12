@@ -1,5 +1,4 @@
-
-import { morseToEnglish } from './morse-dictionary';
+import { morseToEnglish } from "./morse-dictionary";
 
 class MorseBoard {
   constructor(options) {
@@ -13,9 +12,17 @@ class MorseBoard {
     var settings = {
       autoCommit: true,
       debounce: 1e3,
-      dashKeyMap: [{ keyCodes: [189, 173], displayText: '-'}, {keyCodes: [16], displayText: 'shift'}, {keyCodes: [191], displayText: '/'}],
+      dashKeyMap: [
+        189, // -
+        173, // -
+        75, // k
+        191, // /
+      ],
       dashSoundPath: "../assets/sounds/dash.mp3",
-      dotKeyMap: [{ keyCodes: [190], displayText: '.'}],
+      dotKeyMap: [
+        190, // .
+        74 // j
+      ],
       dotSoundPath: "../assets/sounds/dot.mp3",
       height: "25vh",
       notification: true,
@@ -74,14 +81,20 @@ class MorseBoard {
     }
 
     window.addEventListener("keydown", this.onKeydown.bind(this), false);
-    
+
     this.dotButton.addEventListener("click", this.onClick.bind(this), false);
     this.dashButton.addEventListener("click", this.onClick.bind(this), false);
-    
+
     this.output.addEventListener("commit", this.commit.bind(this), false);
   }
 
   onKeydown(e) {
+
+    console.log('test', e.keyCode)
+    console.log('dot', this.config.dotKeyMap.indexOf(code))
+    console.log('dash', this.config.dashKeyMap.indexOf(code))
+
+
     var code = e.keyCode;
     if (
       this.config.dotKeyMap.indexOf(code) > -1 &&
@@ -197,9 +210,7 @@ class MorseBoard {
   commit(e) {
     var letter = e.detail.letter;
     if (this.config.notification) {
-      if (
-        letter
-      ) {
+      if (letter) {
         this.showNotification(letter);
       } else {
         this.showNotification(null, true);
@@ -315,4 +326,4 @@ class MorseBoard {
   }
 }
 
-module.exports.MorseBoard = MorseBoard
+module.exports.MorseBoard = MorseBoard;
