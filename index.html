@@ -1,30 +1,58 @@
 <html>
   <head>
-    <meta charset="utf-8">
+    <meta charset="utf-8" />
     <meta name="viewport" content="user-scalable=no" />
     <title>Morse - Learn</title>
-    <link rel="stylesheet" href="build/style.css">
-    <link rel="icon" href="assets/images/favicon.png">
-    <link href="https://fonts.googleapis.com/css?family=Poppins:600,700" rel="stylesheet">
+    <link rel="stylesheet" href="build/style.css" />
+    <link rel="icon" href="assets/images/favicon.png" />
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:600,700"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <input id="input" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false">
+    <input
+      id="input"
+      autocomplete="off"
+      autocorrect="off"
+      autocapitalize="off"
+      spellcheck="false"
+    />
     <div id="landscape">Please rotate back to portrait mode.</div>
     <a id="button">?</a>
     <div class="tl-btn-group">
-      <a href title="Audio toggle" class="item audio-toggle"><i class="fa fa-2x fa-volume-up"></i></a>
-      <a href title="Speech toggle" class="item speech-toggle"><i class="fa fa-2x fa-assistive-listening-systems"></i></a>
-      <a href title="Visual toggle" class="item visual-toggle"><i class="fa fa-2x fa-eye"></i></a>
+      <a href title="Audio toggle" class="item audio-toggle"
+        ><i class="fa fa-2x fa-volume-up"></i
+      ></a>
+      <a href title="Speech toggle" class="item speech-toggle"
+        ><i class="fa fa-2x fa-assistive-listening-systems"></i
+      ></a>
+      <a href title="Visual toggle" class="item visual-toggle"
+        ><i class="fa fa-2x fa-eye"></i
+      ></a>
     </div>
     <div id="overlay">
       <div class="wrapper">
-        <div class="title">
-          About
-        </div>
-        <p>We created this trainer to make learning Morse code more fun. Give it a try once you’ve set up <a href="https://support.google.com/accessibility/android/answer/9011881">Morse code for Gboard</a> and are ready to learn to type Morse code.</p>
-        <p>This experiment is part of a larger project to support Morse code for accessible communication. Learn More at <a href="http://morse.withgoogle.com/">g.co/morse</a>.</p>
-        <p>Built by Tania Finlayson,<br>Use All Five and<br>Google Creative Lab.</p>
-        <img src="assets/images/badge.svg">
+        <div class="title">About</div>
+        <p>
+          We created this trainer to make learning Morse code more fun. Give it
+          a try once you’ve set up
+          <a
+            href="https://support.google.com/accessibility/android/answer/9011881"
+            >Morse code for Gboard</a
+          >
+          and are ready to learn to type Morse code.
+        </p>
+        <p>
+          This experiment is part of a larger project to support Morse code for
+          accessible communication. Learn More at
+          <a href="http://morse.withgoogle.com/">g.co/morse</a>.
+        </p>
+        <p>
+          Built by Tania Finlayson,<br />Use All Five and<br />Google Creative
+          Lab.
+        </p>
+        <img src="assets/images/badge.svg" />
       </div>
     </div>
     <div id="loading-overlay">
@@ -49,3 +77,114 @@
     <script src="build/bundle.js"></script>
   </body>
 </html>
+
+<div
+  id="morseboard"
+  style="
+    align-items: stretch;
+    background: rgb(230, 231, 232);
+    bottom: 0px;
+    display: flex;
+    flex-direction: column;
+    height: 25vh;
+    left: 0px;
+    position: fixed;
+    width: 100%;
+  "
+  data-children-count="1"
+>
+  <input
+    id="output"
+    readonly="true"
+    tabindex="-1"
+    style="
+      appearance: none;
+      background: rgb(230, 231, 232);
+      border: none;
+      bottom: 25vh;
+      color: rgb(35, 31, 32);
+      font-size: 4vh;
+      font-weight: 700;
+      padding: 5px 0px 0px;
+      text-align: center;
+      text-transform: uppercase;
+      width: 100%;
+      visibility: visible;
+      vertical-align: middle;
+      pointer-events: auto;
+    "
+  />
+  <div
+    id="button-box"
+    style="
+      background: rgb(230, 231, 232);
+      align-items: flex-end;
+      justify-content: center;
+      display: flex;
+      height: 100%;
+      padding: 15px 20px 25px;
+      width: calc(100% - 40px);
+    "
+  >
+    <button
+      id="dot"
+      tabindex="0"
+      style="
+        appearance: none;
+        align-items: center;
+        background: rgb(255, 255, 255);
+        border: none;
+        border-radius: 10px;
+        box-shadow: rgb(161, 162, 162) 0px 4px 0px;
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        font-size: 7vh;
+        outline: none;
+        margin-right: 10px;
+        max-width: 100%;
+        width: 250px;
+      "
+    >
+      <span
+        style="
+          display: block;
+          width: 36px;
+          height: 36px;
+          background: #231f20;
+          border-radius: 50%;
+          pointer-events: none;
+        "
+      ></span></button
+    ><button
+      id="dash"
+      tabindex="0"
+      style="
+        appearance: none;
+        background: rgb(255, 255, 255);
+        border: none;
+        border-radius: 10px;
+        box-shadow: rgb(161, 162, 162) 0px 4px 0px;
+        align-items: center;
+        display: flex;
+        justify-content: center;
+        height: 100%;
+        font-size: 7vh;
+        margin-left: 10px;
+        max-width: 100%;
+        outline: none;
+        width: 250px;
+      "
+    >
+      <span
+        style="
+          display: block;
+          width: 55px;
+          height: 23px;
+          background: #231f20;
+          pointer-events: none;
+        "
+      ></span>
+    </button>
+  </div>
+</div>
