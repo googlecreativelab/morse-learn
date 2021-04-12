@@ -27,15 +27,11 @@ class TitleState {
     this.have_speech_assistive = true;
     this.have_visual_cues = true;
     function clearEventHandlers () {
-      window.removeEventListener('click', startClickEvent)
-      document.removeEventListener('inputEvent', inputEvent)
       audioToggle.removeEventListener('click', onSoundToggle, true);
       speechToggle.removeEventListener('click', onSpeechToggle, true);
-      inpelm.removeEventListener('blur', onInputBlur, false);
     }
     let doStart = () => {
       clearEventHandlers()
-      document.getElementById('input').focus();
       document.querySelector('.tl-btn-group').style.display = 'none';
       this.game.have_audio = this.have_audio;
       this.game.have_speech_assistive = this.have_speech_assistive;
@@ -43,33 +39,9 @@ class TitleState {
       this.start();
       this.hasStarted = true;
     }
-    let startClickEvent = (e) => {
-      // Prevent starting if target is not canvas
-      if (e.target.localName === 'canvas') {
-        doStart()
-      }
-    };
-    let inputEvent = (evt) => {
-      evt.preventDefault()
-      doStart()
-    };
-    window.addEventListener('click', this.game.startClickEvent);
-    if (!this.game.device.desktop && this.game.device.android) {
-      this.game.downEvent = () => {
-        doStart();
-      };
-      document.addEventListener('textInput', this.game.downEvent);
-    } else {
-      document.addEventListener('input', inputEvent);
-      document.getElementById('input').focus();
-    }
-    let inpelm = document.getElementById('input');
-    let onInputBlur = () => {
-        setTimeout(() => {
-          inpelm.focus();
-        }, 500);
-    };
-    inpelm.addEventListener('blur', onInputBlur, false);
+
+    document.addEventListener('keydown', () => doStart(), {once: true})
+    
     let audioToggle = document.querySelector('.audio-toggle')
     let speechToggle = document.querySelector('.speech-toggle')
     document.querySelector('.tl-btn-group').style.display = '';
