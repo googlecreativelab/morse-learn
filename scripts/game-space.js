@@ -12,13 +12,13 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-import { Word } from './word';
-let _ = require('lodash');
-const config = require('./config');
-const delay = require('delay');
+import { Word } from "./word";
+import { MorseBoard } from './morse-board'
+let _ = require("lodash");
+const config = require("./config");
+const delay = require("delay");
 
 class GameSpace {
-
   constructor(game) {
     this.parent = null;
     this.currentLettersInPlay = [];
@@ -30,23 +30,15 @@ class GameSpace {
     this.inputReady = false;
     this.game = game;
     this.gameSpaceGroup = this.game.add.group();
-    this.allBgColors = [
-      0xef4136,
-      0xf7941e,
-      0x662d91,
-      0x00a651
-    ];
-    this.allBgColorsString = [
-      '#ef4136',
-      '#f7941e',
-      '#662d91',
-      '#00a651'
-    ];
+    this.allBgColors = [0xef4136, 0xf7941e, 0x662d91, 0x00a651];
+    this.allBgColorsString = ["#ef4136", "#f7941e", "#662d91", "#00a651"];
   }
 
   findAWord() {
     const shuffled = _.shuffle(this.parent.course.words);
-    const newestLetter = this.currentLettersInPlay[this.currentLettersInPlay.length - 1];
+    const newestLetter = this.currentLettersInPlay[
+      this.currentLettersInPlay.length - 1
+    ];
     let myWord;
 
     // Check if letters in play has some added already
@@ -90,17 +82,27 @@ class GameSpace {
     this.period = this.parent.sounds.period;
     this.dash = this.parent.sounds.dash;
 
-    let inpelm = document.getElementById('input');
-    inpelm.value = '';
+    this.morseBoard = new MorseBoard({
+      debounce: 2e3,
+      dashSoundPath: "./assets/sounds/dash.mp3",
+      dotSoundPath: "./assets/sounds/dot.mp3",
+      notificationStyle: "output",
+      onCommit: function onCommit(e) {
+        this.checkMatch(e.letter ? e.letter : "");
+      },
+    });
+
+    let inpelm = document.getElementById("input");
+    inpelm.value = "";
     if (!this.game.device.desktop && this.game.device.android) {
       if (document._game_downEvent) {
-        document.removeEventListener('textInput', document._game_downEvent);
+        document.removeEventListener("textInput", document._game_downEvent);
       }
 
       document._game_downEvent = (e) => {
         const data = e.data;
         let typedLetter;
-        if (data === ' ') {
+        if (data === " ") {
           typedLetter = inpelm.value;
           typedLetter = typedLetter.trim();
           typedLetter = typedLetter[typedLetter.length - 1];
@@ -108,20 +110,20 @@ class GameSpace {
           typedLetter = data;
         }
         typedLetter = typedLetter.toLowerCase();
-        if (typeof typedLetter !== 'undefined') {
+        if (typeof typedLetter !== "undefined") {
           this.checkMatch(typedLetter);
         }
       };
-      document.addEventListener('textInput', document._game_downEvent);
+      document.addEventListener("textInput", document._game_downEvent);
     } else {
       if (document._game_inputEvent) {
-        document.removeEventListener('input', document._game_inputEvent);
+        document.removeEventListener("input", document._game_inputEvent);
       }
       if (inpelm._game_onBlur) {
-        inpelm.removeEventListener('blur', inpelm._game_onBlur);
+        inpelm.removeEventListener("blur", inpelm._game_onBlur);
       }
-      let morseInputTimeout = null
-      let morseInputs = []
+      let morseInputTimeout = null;
+      let morseInputs = [];
       document._game_inputEvent = (evt) => {
         evt.preventDefault();
         if (morseInputTimeout != null) {
@@ -131,7 +133,7 @@ class GameSpace {
           morseInputTimeout = null;
           if (morseInputs.length > 0) {
             // finalize
-            let letter = this.parent.morseToEnglish[morseInputs.join('')];
+            let letter = this.parent.morseToEnglish[morseInputs.join("")];
             if (letter) {
               this.checkMatch(letter);
             }
@@ -139,24 +141,24 @@ class GameSpace {
           }
         }, config.emulator.finalizeTimeout);
         if (config.emulator.keysMap.period.indexOf(evt.data) != -1) {
-          morseInputs.push('.');
+          morseInputs.push(".");
           if (this.game.have_audio) {
             this.parent.sounds.period.play();
           }
         } else if (config.emulator.keysMap.dash.indexOf(evt.data) != -1) {
-          morseInputs.push('-');
+          morseInputs.push("-");
           if (this.game.have_audio) {
             this.parent.sounds.dash.play();
           }
         }
       };
-      document.addEventListener('input', document._game_inputEvent);
+      document.addEventListener("input", document._game_inputEvent);
       inpelm._game_onBlur = () => {
         setTimeout(() => {
           inpelm.focus();
         }, 500);
       };
-      inpelm.addEventListener('blur', inpelm._game_onBlur);
+      inpelm.addEventListener("blur", inpelm._game_onBlur);
     }
 
     setTimeout(() => {
@@ -166,7 +168,11 @@ class GameSpace {
 
       for (let i = 0; i < this.currentWords.length; i++) {
         if (i > 0) {
-          const myStartX = this.currentWords[i - 1].myStartX + (this.currentWords[i - 1].letterObjects.length * config.app.wordBrickSize) + config.app.spaceBetweenWords;
+          const myStartX =
+            this.currentWords[i - 1].myStartX +
+            this.currentWords[i - 1].letterObjects.length *
+              config.app.wordBrickSize +
+            config.app.spaceBetweenWords;
           this.currentWords[i].setPosition(myStartX);
         } else {
           this.createFirstWord();
@@ -181,9 +187,17 @@ class GameSpace {
     word.setPosition(config.app.wordBrickSize);
 
     // Animate stuff immediately when first starting
-    this.game.add.tween(word.pills[0].scale).to({ x: 1, y: 1 }, 250, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_START_DELAY);
+    this.game.add
+      .tween(word.pills[0].scale)
+      .to(
+        { x: 1, y: 1 },
+        250,
+        Phaser.Easing.Exponential.Out,
+        true,
+        config.animations.SLIDE_START_DELAY
+      );
     word.pushUp(0);
-    word.letterObjects[0].addColor('#F1E4D4', 0);
+    word.letterObjects[0].addColor("#F1E4D4", 0);
     word.letterObjects[0].alpha = 1;
 
     // await delay(config.animations.SLIDE_END_DELAY + 800);
@@ -217,10 +231,16 @@ class GameSpace {
 
     // Need to wait for promise for letterScoreDict
     setTimeout(() => {
-      const arrayIntersection = _.intersection(this.currentLettersInPlay, this.parent.course.lettersToLearn);
+      const arrayIntersection = _.intersection(
+        this.currentLettersInPlay,
+        this.parent.course.lettersToLearn
+      );
 
       for (let i = 0; i < arrayIntersection.length; i++) {
-        if (this.letterScoreDict[arrayIntersection[i]] >= config.app.LEARNED_THRESHOLD) {
+        if (
+          this.letterScoreDict[arrayIntersection[i]] >=
+          config.app.LEARNED_THRESHOLD
+        ) {
           newArray.push(true);
         } else {
           newArray.push(false);
@@ -231,7 +251,10 @@ class GameSpace {
       lastLetter = newArray[newArray.length - 1];
 
       // Check if last letter in play is true and got 3 or more in a row
-      if (lastLetter && this.consecutiveCorrect >= config.app.CONSECUTIVE_CORRECT) {
+      if (
+        lastLetter &&
+        this.consecutiveCorrect >= config.app.CONSECUTIVE_CORRECT
+      ) {
         let oldLength = this.currentLettersInPlay.length;
         let newLength = oldLength + 1;
         this.consecutiveCorrect = 0;
@@ -242,7 +265,10 @@ class GameSpace {
           }
         }
 
-        this.currentLettersInPlay = this.parent.course.lettersToLearn.slice(0, newLength);
+        this.currentLettersInPlay = this.parent.course.lettersToLearn.slice(
+          0,
+          newLength
+        );
       }
     }, 200);
   }
@@ -252,8 +278,12 @@ class GameSpace {
     let length = myWord.length;
     let word = new Word(this.game);
     word.myLength = length;
-    word.myColor = this.allBgColors[this.currentWords.length % this.allBgColors.length];
-    word.myColorString = this.allBgColorsString[this.currentWords.length % this.allBgColorsString.length]
+    word.myColor = this.allBgColors[
+      this.currentWords.length % this.allBgColors.length
+    ];
+    word.myColorString = this.allBgColorsString[
+      this.currentWords.length % this.allBgColorsString.length
+    ];
     word.row = 0;
     word.parent = this;
     word.gameParent = this.parent;
@@ -266,7 +296,10 @@ class GameSpace {
   addAWord() {
     this.makeWordObject();
     let priorIndex = this.currentWords.length - 2;
-    let myStartX = this.currentWords[priorIndex].letterObjects[0].position.x + (this.currentWords[priorIndex].myLength * config.app.wordBrickSize) + config.app.spaceBetweenWords;
+    let myStartX =
+      this.currentWords[priorIndex].letterObjects[0].position.x +
+      this.currentWords[priorIndex].myLength * config.app.wordBrickSize +
+      config.app.spaceBetweenWords;
 
     this.currentWords[this.currentWords.length - 1].setPosition(myStartX);
   }
@@ -282,14 +315,16 @@ class GameSpace {
       this.mistakeCount = 0;
       this.consecutiveCorrect++;
 
-      this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
+      this.game.add
+        .tween(word.pills[word.currentLetterIndex].scale)
+        .to({ x: 0, y: 0 }, 500, Phaser.Easing.Back.In, true);
 
       word.pushDown(word.currentLetterIndex);
       word.currentLetterIndex++;
       this.letterScoreDict[letter] += 1;
 
       if (this.letterScoreDict[letter] > config.app.LEARNED_THRESHOLD + 2) {
-        this.letterScoreDict[letter] = config.app.LEARNED_THRESHOLD + 2
+        this.letterScoreDict[letter] = config.app.LEARNED_THRESHOLD + 2;
       }
       if (this.game.have_speech_assistive) {
         await this.playCorrect();
@@ -315,7 +350,10 @@ class GameSpace {
         await word.showHint();
         await this.playHints(word.getCurrentLetter());
       }
-      this.parent.header.updateProgressLights(this.letterScoreDict, theLetterIndex);
+      this.parent.header.updateProgressLights(
+        this.letterScoreDict,
+        theLetterIndex
+      );
     } else {
       this.mistakeCount++;
       this.consecutiveCorrect = 0;
@@ -378,7 +416,7 @@ class GameSpace {
 
   async playLetter(letter) {
     let name = this.parent.course.getLetterName(letter);
-    let audio = this.parent.sounds['letter-' + name];
+    let audio = this.parent.sounds["letter-" + name];
     if (this.game.have_speech_assistive && audio) {
       let tmp = audio.play();
       let timeout = tmp.totalDuration || 1;
@@ -397,7 +435,7 @@ class GameSpace {
    */
   async playLetterSoundAlike(letter) {
     let name = this.parent.course.getLetterName(letter.letter);
-    let audio = this.parent.sounds['soundalike-letter-' + name];
+    let audio = this.parent.sounds["soundalike-letter-" + name];
     if (this.game.have_speech_assistive && audio) {
       await delay(300);
       let tmp = audio.play();
@@ -419,21 +457,21 @@ class GameSpace {
     }
     for (let i = 0; i < letter.morse.length; i++) {
       let tmp;
-      if (letter.morse[i] === '\u002D') {
+      if (letter.morse[i] === "\u002D") {
         tmp = this.dash.play();
-      } else if (letter.morse[i] === '\u002E') {
+      } else if (letter.morse[i] === "\u002E") {
         tmp = this.period.play();
       }
       await delay(300);
       if (tmp) {
-        await delay(Math.min(0.601, tmp.totalDuration) * 1000)
+        await delay(Math.min(0.601, tmp.totalDuration) * 1000);
       }
     }
   }
 
   setWatchedVideo() {
-    if (typeof(Storage) !== 'undefined') {
-      localStorage.setItem('intro', true);
+    if (typeof Storage !== "undefined") {
+      localStorage.setItem("intro", true);
     }
   }
 
@@ -456,12 +494,44 @@ class GameSpace {
           const pill = this.currentWords[w].pills[l];
           const pillX = pill.position.x;
 
-          this.game.add.tween(letter).to({ x: letterX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
-          this.game.add.tween(hint).to({ x: hintX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
-          this.game.add.tween(pill).to({ x: pillX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
+          this.game.add
+            .tween(letter)
+            .to(
+              { x: letterX - distBetweenTargetAndNextLetter },
+              config.animations.SLIDE_TRANSITION,
+              Phaser.Easing.Exponential.Out,
+              true,
+              config.animations.SLIDE_END_DELAY
+            );
+          this.game.add
+            .tween(hint)
+            .to(
+              { x: hintX - distBetweenTargetAndNextLetter },
+              config.animations.SLIDE_TRANSITION,
+              Phaser.Easing.Exponential.Out,
+              true,
+              config.animations.SLIDE_END_DELAY
+            );
+          this.game.add
+            .tween(pill)
+            .to(
+              { x: pillX - distBetweenTargetAndNextLetter },
+              config.animations.SLIDE_TRANSITION,
+              Phaser.Easing.Exponential.Out,
+              true,
+              config.animations.SLIDE_END_DELAY
+            );
         }
 
-        this.game.add.tween(bg).to({ x: bgX - distBetweenTargetAndNextLetter }, config.animations.SLIDE_TRANSITION, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY);
+        this.game.add
+          .tween(bg)
+          .to(
+            { x: bgX - distBetweenTargetAndNextLetter },
+            config.animations.SLIDE_TRANSITION,
+            Phaser.Easing.Exponential.Out,
+            true,
+            config.animations.SLIDE_END_DELAY
+          );
       }
 
       // Set video as watched if user passes first word
@@ -469,7 +539,15 @@ class GameSpace {
         this.setWatchedVideo();
       }
 
-      this.game.add.tween(word.pills[word.currentLetterIndex].scale).to({ x: 1, y: 1 }, 250, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_END_DELAY + 200);
+      this.game.add
+        .tween(word.pills[word.currentLetterIndex].scale)
+        .to(
+          { x: 1, y: 1 },
+          250,
+          Phaser.Easing.Exponential.Out,
+          true,
+          config.animations.SLIDE_END_DELAY + 200
+        );
 
       setTimeout(resolve, config.animations.SLIDE_END_DELAY + 450);
 
