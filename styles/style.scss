@@ -11,8 +11,8 @@ $fa-font-path: "../webfonts";
   --sk-color: rgb(223, 223, 223);
 }
 
-$beige: #F1E4D4;
-$red: #EF4136;
+$beige: #f1e4d4;
+$red: #ef4136;
 $black: #000000;
 
 * {
@@ -26,7 +26,7 @@ html {
 
 html,
 body {
-  font-family: 'Poppins', 'Helvetica', 'Arial', sans-serif;
+  font-family: "Poppins", "Helvetica", "Arial", sans-serif;
   font-weight: 800;
   overflow: hidden;
   -webkit-font-smoothing: antialiased;
@@ -40,13 +40,130 @@ body {
   }
 }
 
-select,
-textarea,
-input {
-  left: -9999px;
-  position: absolute;
+#dash {
+  appearance: none;
+  background: rgb(255, 255, 255);
+  border: none;
+  border-radius: 10px;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  font-size: 7vh;
+  margin-left: 10px;
+  max-width: 100%;
+  outline: none;
+  width: 250px;
+}
+
+#dash > span {
+  display: block;
+  width: 55px;
+  height: 23px;
+  background: #231f20;
   pointer-events: none;
-  z-index: -1;
+}
+
+#dot {
+  appearance: none;
+  align-items: center;
+  background: rgb(255, 255, 255);
+  border: none;
+  border-radius: 10px;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px;
+  display: flex;
+  justify-content: center;
+  height: 100%;
+  font-size: 7vh;
+  outline: none;
+  margin-right: 10px;
+  max-width: 100%;
+  width: 250px;
+}
+
+#dot > span {
+  display: block;
+  width: 36px;
+  height: 36px;
+  background: #231f20;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+#button-box {
+  background: rgb(230, 231, 232);
+  align-items: flex-end;
+  justify-content: center;
+  display: flex;
+  height: 100%;
+  padding: 15px 20px 25px;
+  width: calc(100% - 40px);
+}
+
+#output {
+  appearance: none;
+  background: rgb(230, 231, 232);
+  border: none;
+  bottom: 25vh;
+  color: rgb(35, 31, 32);
+  font-size: 4vh;
+  font-weight: 700;
+  padding: 5px 0px 0px;
+  text-align: center;
+  text-transform: uppercase;
+  width: 100%;
+  visibility: visible;
+  vertical-align: middle;
+  pointer-events: auto;
+}
+
+#morseboard {
+  align-items: stretch;
+  background: rgb(230, 231, 232);
+  bottom: 0px;
+  display: none;
+  flex-direction: column;
+  height: 25vh;
+  left: 0px;
+  position: fixed;
+  width: 100%;
+}
+
+.dot-column, .dash-column {
+  display: flex;
+  flex-direction: column;
+}
+
+@media (max-width: 600px) {
+  .dot-column, .dash-column {
+    display: none
+  }
+}
+
+.dot-box, .dash-box {
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+}
+
+
+.keybutton {
+  appearance: none;
+  margin: 8px;
+  background: rgb(255, 255, 255);
+  border: none;
+  border-radius: 10px;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px;
+  align-items: center;
+  display: flex;
+  justify-content: center;
+  height: 42px;
+  font-size: 32px;
+  margin-left: 10px;
+  max-width: 100%;
+  outline: none;
+  width: 64px;
 }
 
 // Fallback for landscape
@@ -64,7 +181,7 @@ input {
 }
 
 #button {
-  color: #F1E4D4;
+  color: #f1e4d4;
   cursor: pointer;
   display: none;
   font-size: 50px;
@@ -92,7 +209,7 @@ input {
   &::after {
     background-color: rgba($black, 0.4);
     border-radius: 50%;
-    content: '';
+    content: "";
     display: block;
     position: absolute;
     top: 29px;
