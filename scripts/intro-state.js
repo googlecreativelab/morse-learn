@@ -47,12 +47,12 @@ class IntroState {
       this.skipVideoButtonGroup.height = video.height;
 
       if (this.game.state.getCurrentState().key === 'intro') {
-        document.addEventListener('textInput', () => {
+        document.addEventListener('keydown', () => {
           if (!this.hasStarted) {
             this.start();
             this.hasStarted = true;
           }
-        }, false);
+        }, { once: true });
       }
     });
   }

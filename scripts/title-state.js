@@ -74,7 +74,7 @@ class TitleState {
 
     function clearEventHandlers() {
       document.removeEventListener("keydown", startListener);
-      canvas.removeEventListener("keydown", startListener);
+      canvas.removeEventListener("click", startListener);
     }
     let doStart = () => {
       clearEventHandlers();
