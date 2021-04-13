@@ -301,14 +301,19 @@ body {
     margin-bottom: 40px;
   }
 
+  p:last-of-type {
+    margin-bottom: 10px;
+  }
+
   a {
     color: rgba($black, 0.4);
   }
 
   img {
     height: auto;
-    margin: 80px auto;
-    max-width: 600px;
+    margin: 0 auto;
+    display: block;
+    max-width: 400px;
   }
 }
 
