@@ -167,7 +167,8 @@ body {
   background: rgb(255, 255, 255);
   border: none;
   border-radius: 10px;
-  box-shadow: rgb(161, 162, 162) 0px 4px 0px, rgb(161, 162, 162) 2px 4px 0px, rgb(161, 162, 162) -2px 4px 0px;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px, rgb(161, 162, 162) 2px 4px 0px,
+    rgb(161, 162, 162) -2px 4px 0px;
   height: 42px;
   font-size: 32px;
   outline: none;
@@ -317,24 +318,33 @@ body {
   }
 }
 
+.gamemode {
+  padding-top: 48px;
+
+  p,
+  h2, span {
+    display: none;
+  }
+}
+
 .tl-btn-group {
   position: fixed;
   display: flex;
   flex-direction: column;
   left: 1em;
   top: 1em;
-  
+
   color: white;
   width: 250px;
 
   span {
     margin-left: 4px;
   }
-  
+
   i {
     width: 36px;
   }
-  
+
   .item {
     text-decoration: none;
     display: flex;

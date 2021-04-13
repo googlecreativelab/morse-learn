@@ -32,14 +32,12 @@ class TitleState {
     const startListener = () => doStart();
 
     function clearEventHandlers() {
-      audioToggle.removeEventListener("click", onSoundToggle, true);
-      speechToggle.removeEventListener("click", onSpeechToggle, true);
       document.removeEventListener("keydown", startListener);
       canvas.removeEventListener("keydown", startListener);
     }
     let doStart = () => {
       clearEventHandlers();
-      document.querySelector(".tl-btn-group").style.display = "none";
+      document.querySelector(".tl-btn-group").classList.add('gamemode');
       this.game.have_audio = this.have_audio;
       this.game.have_speech_assistive = this.have_speech_assistive;
       this.game.have_visual_cues = this.have_visual_cues;
@@ -59,17 +57,24 @@ class TitleState {
       speechToggle.classList[
         this.have_audio && this.have_speech_assistive ? "remove" : "add"
       ]("disabled");
+
+      // If we turn sound off we should also turn speech have_speech_assistive off
+      if(!this.game.have_audio) {
+        this.game.have_speech_assistive = false
+      }
     };
     let onSoundToggle = (evt) => {
       evt.preventDefault();
       evt.stopPropagation();
       this.have_audio = !this.have_audio;
+      this.game.have_audio = this.have_audio
       updateAudioToggles();
     };
     let onSpeechToggle = (evt) => {
       evt.preventDefault();
       evt.stopPropagation();
       this.have_speech_assistive = !this.have_speech_assistive;
+      this.game.have_speech_assistive = this.have_speech_assistive;
       updateAudioToggles();
     };
     updateAudioToggles();
@@ -80,10 +85,11 @@ class TitleState {
     const visualToggle = document.querySelector(".visual-toggle");
     const onVisualToggle = (e) => {
       // TODO: If we use a <span> instead of a <a> for the toggle, we don't
-      //   need to call these two methods.
+      // need to call these two methods.
       e.preventDefault();
       e.stopPropagation();
       this.have_visual_cues = !this.have_visual_cues;
+      this.game.have_visual_cues = this.have_visual_cues;
       const action = this.have_visual_cues ? "remove" : "add";
       visualToggle.classList[action]("disabled");
     };
