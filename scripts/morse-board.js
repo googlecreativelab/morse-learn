@@ -89,12 +89,6 @@ class MorseBoard {
   }
 
   onKeydown(e) {
-
-    console.log('test', e.keyCode)
-    console.log('dot', this.config.dotKeyMap.indexOf(code))
-    console.log('dash', this.config.dashKeyMap.indexOf(code))
-
-
     var code = e.keyCode;
     if (
       this.config.dotKeyMap.indexOf(code) > -1 &&

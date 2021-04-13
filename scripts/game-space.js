@@ -298,7 +298,6 @@ class GameSpace {
 
       this.letterScoreDict[letter] -= 1;
       word.shake(word.currentLetterIndex);
-      // console.log('not a match: ' + typedLetter + ' ' + letter);
 
       if (this.game.have_speech_assistive) {
         await this.playWrong();
