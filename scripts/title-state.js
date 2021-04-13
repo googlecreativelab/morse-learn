@@ -90,7 +90,7 @@ class TitleState {
 
     canvas.addEventListener("click", startListener);
 
-    document.querySelector(".tl-btn-group").style.display = "";
+    document.querySelector(".tl-btn-group").style.opacity = 1;
     let updateAudioToggles = () => {
       audioToggle.classList[this.have_audio ? "remove" : "add"]("disabled");
       speechToggle.classList[

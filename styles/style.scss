@@ -330,6 +330,7 @@ body {
 .tl-btn-group {
   position: fixed;
   display: flex;
+  opacity: 0;
   flex-direction: column;
   left: 1em;
   top: 1em;
