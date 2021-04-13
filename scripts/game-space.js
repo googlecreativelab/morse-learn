@@ -88,6 +88,7 @@ class GameSpace {
       dashSoundPath: "./assets/sounds/dash.mp3",
       dotSoundPath: "./assets/sounds/dot.mp3",
       notificationStyle: "output",
+      game: this.game,
       onCommit: (e) =>  {
         this.checkMatch(e.letter ? e.letter : "");
       },

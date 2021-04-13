@@ -5,6 +5,7 @@ class MorseBoard {
     this.timeout = null;
     this.morseDictionary = morseToEnglish;
     this.config = this.mergeSettings(options);
+    this.game = options.game;
     this.create();
   }
 
@@ -139,12 +140,12 @@ class MorseBoard {
     var button = e.target.id;
     if (button === "dot") {
       this.output.value += ".";
-      if (this.config.sounds && !this.detectIE()) {
+      if (this.config.sounds && !this.detectIE() && this.game.have_audio) {
         this.dotAudio.play();
       }
     } else if (button === "dash") {
       this.output.value += "-";
-      if (this.config.sounds && !this.detectIE()) {
+      if (this.config.sounds && !this.detectIE() && this.game.have_audio) {
         this.dashAudio.play();
       }
     }
