@@ -40,6 +40,23 @@ body {
   }
 }
 
+.keyboard-controls {
+  position: absolute;
+  padding: 16px;
+}
+
+@media (max-width: 900px) {
+  .keyboard-controls {
+    display: none;
+  }
+}
+
+.button-container {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 32px;
+}
+
 #dash {
   appearance: none;
   background: rgb(255, 255, 255);
@@ -130,23 +147,19 @@ body {
   width: 100%;
 }
 
-.dot-column, .dash-column {
-  display: flex;
-  flex-direction: column;
-}
 
-@media (max-width: 600px) {
-  .dot-column, .dash-column {
-    display: none
-  }
-}
 
-.dot-box, .dash-box {
+.dot-box,
+.dash-box {
   display: flex;
   flex-direction: row;
   height: 100%;
 }
 
+.key-container {
+  width: 100px;
+  height: 100px;
+}
 
 .keybutton {
   appearance: none;
@@ -154,16 +167,11 @@ body {
   background: rgb(255, 255, 255);
   border: none;
   border-radius: 10px;
-  box-shadow: rgb(161, 162, 162) 0px 4px 0px;
-  align-items: center;
-  display: flex;
-  justify-content: center;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px, rgb(161, 162, 162) 2px 4px 0px, rgb(161, 162, 162) -2px 4px 0px;
   height: 42px;
   font-size: 32px;
-  margin-left: 10px;
-  max-width: 100%;
   outline: none;
-  width: 64px;
+  width: 42px;
 }
 
 // Fallback for landscape

@@ -71,26 +71,39 @@
 
     <div id="morseboard" data-children-count="1">
       <input id="output" readonly="true" tabindex="-1" />
-      <div id="button-box">
 
-        <div class="dot-box">
-          <div class="dot-column">
-            <button class="keybutton dotkey">.</button>
-            <button class="keybutton dotkey">j</button>
+      <div class="button-container">
+        <div class="keyboard-controls">
+          <h3>Keyboard Controls</h3>
+          <div>
+            <p>Dash Keys</p>
+            <div>
+              <button class="keybutton">.</button>
+              <button class="keybutton">j</button>
+            </div>
           </div>
-          <button id="dot" tabindex="0">
-            <span></span>
-          </button>
+
+          <div>
+            <p>Dot Keys</p>
+            <div>
+              <button class="keybutton">-</button>
+              <button class="keybutton">k</button>
+              <button class="keybutton">/</button>
+            </div>
+          </div>
         </div>
 
-        <div class="dash-box">
-          <button id="dash" tabindex="0">
-            <span></span>
-          </button>
-          <div class="dash-column">
-            <button class="keybutton dashkey">-</button>
-            <button class="keybutton dashkey">k</button>
-            <button class="keybutton dashkey">/</button>
+        <div id="button-box">
+          <div class="dot-box">
+            <button id="dot" tabindex="0">
+              <span></span>
+            </button>
+          </div>
+
+          <div class="dash-box">
+            <button id="dash" tabindex="0">
+              <span></span>
+            </button>
           </div>
         </div>
       </div>
