@@ -281,15 +281,17 @@ class GameSpace {
       // We can accept the input before we give the hint
       this.inputReady = true;
 
+      this.parent.header.updateProgressLights(
+        this.letterScoreDict,
+        theLetterIndex
+      );
+
       await this.playLetter(letter);
       if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
         await word.showHint();
         await this.playHints(word.getCurrentLetter());
       }
-      this.parent.header.updateProgressLights(
-        this.letterScoreDict,
-        theLetterIndex
-      );
+    
     } else {
       this.mistakeCount++;
       this.consecutiveCorrect = 0;
