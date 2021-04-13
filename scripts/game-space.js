@@ -27,7 +27,7 @@ class GameSpace {
     this.currentWordIndex = 0;
     this.mistakeCount = 0;
     this.consecutiveCorrect = 0;
-    this.inputReady = false;
+    this.inputReady = true;
     this.game = game;
     this.gameSpaceGroup = this.game.add.group();
     this.allBgColors = [0xef4136, 0xf7941e, 0x662d91, 0x00a651];
@@ -277,6 +277,10 @@ class GameSpace {
       let theLetterIndex = this.newLetterArray.indexOf(typedLetter);
 
       this.slideLetters();
+
+      // We can accept the input before we give the hint
+      this.inputReady = true;
+
       await this.playLetter(letter);
       if (this.letterScoreDict[letter] < config.app.LEARNED_THRESHOLD) {
         await word.showHint();
