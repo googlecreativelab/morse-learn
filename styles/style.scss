@@ -175,6 +175,12 @@ body {
   width: 42px;
 }
 
+.keybutton.longkey {
+  width: auto;
+  font-size: 16px;
+  padding: 0 4px;
+}
+
 // Fallback for landscape
 #landscape {
   color: $beige;

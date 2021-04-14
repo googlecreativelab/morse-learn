@@ -17,12 +17,13 @@ class MorseBoard {
         189, // -
         173, // -
         75, // k
-        191, // /
+        32, // space
       ],
       dashSoundPath: "../assets/sounds/dash.mp3",
       dotKeyMap: [
         190, // .
-        74 // j
+        74, // j
+        13 // enter
       ],
       dotSoundPath: "../assets/sounds/dot.mp3",
       height: "25vh",
@@ -92,32 +93,29 @@ class MorseBoard {
   onKeydown(e) {
     var code = e.keyCode;
     if (
-      this.config.dotKeyMap.indexOf(code) > -1 &&
-      code !== 13 &&
-      code !== 32
+      this.config.dotKeyMap.indexOf(code) > -1
     ) {
       this.dotButton.click();
     } else if (
-      this.config.dashKeyMap.indexOf(code) > -1 &&
-      code !== 13 &&
-      code !== 32
+      this.config.dashKeyMap.indexOf(code) > -1
     ) {
       this.dashButton.click();
     }
-    if (code === 13 && !this.config.autoCommit) {
-      if (this.output.value && this.output.value !== null) {
-        this.output.dispatchEvent(
-          new CustomEvent("commit", {
-            detail: {
-              symbol: this.output.value,
-              letter: this.morseDictionary[this.output.value],
-            },
-          })
-        );
-      } else {
-        this.showNotification(null, true);
-      }
-    }
+
+    // if (code === 13 && !this.config.autoCommit) {
+    //   if (this.output.value && this.output.value !== null) {
+    //     this.output.dispatchEvent(
+    //       new CustomEvent("commit", {
+    //         detail: {
+    //           symbol: this.output.value,
+    //           letter: this.morseDictionary[this.output.value],
+    //         },
+    //       })
+    //     );
+    //   } else {
+    //     this.showNotification(null, true);
+    //   }
+    // }
   }
 
   onClick(e) {
