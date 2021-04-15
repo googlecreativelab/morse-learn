@@ -13,32 +13,26 @@
 // limitations under the License.
 
 const words = require('./words');
-import { getClientHeight } from './util'
+import { getClientHeight, getKeyboardHeight, getGameAreaHeight } from './util'
 
 const isTouch = 'ontouchstart' in document.documentElement;
 const isLandscape = window.innerWidth > window.innerHeight;
 
-// Keyboard height needs to be taken into account so we have magic numbers here
-const keyboardHeight = () => {
-  let height;
-  if (screen.width >= 768) {
-    height = (!isLandscape ? getClientHeight() * 0.35 : document.body.clientWidth * 0.4);
-  } else {
-    height = (!isLandscape ? getClientHeight() * 0.5 : document.body.clientWidth * 0.27);
-  }
-  return height;
-};
+// Cap the width at double the height
+const aspectRatio = 1.45
+const maxWidth = getGameAreaHeight() * aspectRatio
+const appWidth = Math.min(document.body.clientWidth, maxWidth)
 
 const config = {
   GLOBALS: {
     isTouch: isTouch,
     isLandscape: isLandscape,
-    appWidth: document.body.clientWidth,
+    appWidth,
     appHeight: getClientHeight(),
     devicePixelRatio: window.devicePixelRatio,
-    worldBottom: (!isLandscape ? getClientHeight() : document.body.clientWidth) - keyboardHeight(),
-    worldCenter: ((!isLandscape ? getClientHeight() : document.body.clientWidth) - keyboardHeight()) * 0.55,
-    worldTop: ((!isLandscape ? getClientHeight() : document.body.clientWidth) - keyboardHeight()) * 0.35
+    worldBottom: (!isLandscape ? getClientHeight() : appWidth) - getKeyboardHeight(),
+    worldCenter: ((!isLandscape ? getClientHeight() : appWidth) - getKeyboardHeight()) * 0.55,
+    worldTop: ((!isLandscape ? getClientHeight() : appWidth) - getKeyboardHeight()) * 0.35
   },
   app: {
     LEARNED_THRESHOLD: 2,
