@@ -40,6 +40,23 @@ body {
   }
 }
 
+.keyboard-controls {
+  position: absolute;
+  padding: 16px;
+}
+
+@media (max-width: 900px) {
+  .keyboard-controls {
+    display: none;
+  }
+}
+
+.button-container {
+  width: 100%;
+  height: 100%;
+  margin-bottom: 32px;
+}
+
 #dash {
   appearance: none;
   background: rgb(255, 255, 255);
@@ -125,28 +142,25 @@ body {
   display: none;
   flex-direction: column;
   height: 25vh;
+  min-height: 227px;
   left: 0px;
   position: fixed;
   width: 100%;
 }
 
-.dot-column, .dash-column {
-  display: flex;
-  flex-direction: column;
-}
 
-@media (max-width: 600px) {
-  .dot-column, .dash-column {
-    display: none
-  }
-}
 
-.dot-box, .dash-box {
+.dot-box,
+.dash-box {
   display: flex;
   flex-direction: row;
   height: 100%;
 }
 
+.key-container {
+  width: 100px;
+  height: 100px;
+}
 
 .keybutton {
   appearance: none;
@@ -154,16 +168,18 @@ body {
   background: rgb(255, 255, 255);
   border: none;
   border-radius: 10px;
-  box-shadow: rgb(161, 162, 162) 0px 4px 0px;
-  align-items: center;
-  display: flex;
-  justify-content: center;
+  box-shadow: rgb(161, 162, 162) 0px 4px 0px, rgb(161, 162, 162) 2px 4px 0px,
+    rgb(161, 162, 162) -2px 4px 0px;
   height: 42px;
   font-size: 32px;
-  margin-left: 10px;
-  max-width: 100%;
   outline: none;
-  width: 64px;
+  width: 42px;
+}
+
+.keybutton.longkey {
+  width: auto;
+  font-size: 16px;
+  padding: 0 4px;
 }
 
 // Fallback for landscape
@@ -293,23 +309,54 @@ body {
     margin-bottom: 40px;
   }
 
+  p:last-of-type {
+    margin-bottom: 10px;
+  }
+
   a {
     color: rgba($black, 0.4);
   }
 
   img {
     height: auto;
-    margin: 80px auto;
-    max-width: 600px;
+    margin: 0 auto;
+    display: block;
+    max-width: 400px;
+  }
+}
+
+.gamemode {
+  padding-top: 48px;
+
+  p,
+  h2, span {
+    display: none;
   }
 }
 
 .tl-btn-group {
   position: fixed;
+  display: flex;
+  opacity: 0;
+  flex-direction: column;
   left: 1em;
   top: 1em;
+
+  color: white;
+  width: 250px;
+
+  span {
+    margin-left: 4px;
+  }
+
+  i {
+    width: 36px;
+  }
+
   .item {
-    display: inline-block;
+    text-decoration: none;
+    display: flex;
+    align-items: center;
     padding: 0.3em;
     color: white;
     &.disabled {

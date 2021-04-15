@@ -15,6 +15,17 @@
 const config = require("./config");
 import { morseToEnglish } from "./morse-dictionary";
 
+/**
+ * Localstorage stores booleans as strings so we
+ * cast them to real bools here 
+ */
+const getBoolFromLocalStore = (key) => {
+  const result = localStorage.getItem(key)
+  if(result === null) return null
+  if(result === 'true') return true
+  return false
+}
+
 class TitleState {
   constructor(game, course) {
     this.course = course;
@@ -22,24 +33,52 @@ class TitleState {
     this.letterScoreDict = {};
     this.hasStarted = false;
     this.game = game;
-    this.have_audio = true;
-    this.have_speech_assistive = true;
-    this.have_visual_cues = true;
 
     // This code is pretty flakey, there is probably a cleaner way to do this in phaser
     const canvas = document.querySelector("canvas");
 
+    // If any of the settings are undefined then we default them to true
+    if(getBoolFromLocalStore('have_speech_assistive') === null) {
+      localStorage.setItem('have_speech_assistive', true)
+    }
+
+    if(getBoolFromLocalStore('have_audio') === null) {
+      localStorage.setItem('have_audio', true)
+    }
+
+    if(getBoolFromLocalStore('have_visual_cues') === null) {
+      localStorage.setItem('have_visual_cues', true)
+    }
+
+    // Set the initial values to whatever is in local storage
+    const initialVisualCues = getBoolFromLocalStore('have_visual_cues')
+    const initialAudio = getBoolFromLocalStore('have_audio')
+    const initialSpeechAssistive = getBoolFromLocalStore('have_speech_assistive') 
+    this.game.have_visual_cues = initialVisualCues
+    this.game.have_audio = initialAudio
+    this.game.have_speech_assistive = initialSpeechAssistive
+    this.have_audio = initialAudio;
+    this.have_speech_assistive = initialSpeechAssistive;
+    this.have_visual_cues = initialVisualCues;
+
+    let audioToggle = document.querySelector(".audio-toggle");
+    let speechToggle = document.querySelector(".speech-toggle");
+    let visualToggle = document.querySelector(".visual-toggle");
+
+    // Make the display match the initial state
+    audioToggle.classList.add(initialAudio ? 'noop' : 'disabled')
+    speechToggle.classList.add(initialSpeechAssistive ? 'noop' : 'disabled')
+    visualToggle.classList.add(initialVisualCues ? 'noop' : 'disabled')
+
     const startListener = () => doStart();
 
     function clearEventHandlers() {
-      audioToggle.removeEventListener("click", onSoundToggle, true);
-      speechToggle.removeEventListener("click", onSpeechToggle, true);
       document.removeEventListener("keydown", startListener);
-      canvas.removeEventListener("keydown", startListener);
+      canvas.removeEventListener("click", startListener);
     }
     let doStart = () => {
       clearEventHandlers();
-      document.querySelector(".tl-btn-group").style.display = "none";
+      document.querySelector(".tl-btn-group").classList.add('gamemode');
       this.game.have_audio = this.have_audio;
       this.game.have_speech_assistive = this.have_speech_assistive;
       this.game.have_visual_cues = this.have_visual_cues;
@@ -51,25 +90,34 @@ class TitleState {
 
     canvas.addEventListener("click", startListener);
 
-    let audioToggle = document.querySelector(".audio-toggle");
-    let speechToggle = document.querySelector(".speech-toggle");
-    document.querySelector(".tl-btn-group").style.display = "";
+    document.querySelector(".tl-btn-group").style.opacity = 1;
     let updateAudioToggles = () => {
       audioToggle.classList[this.have_audio ? "remove" : "add"]("disabled");
       speechToggle.classList[
         this.have_audio && this.have_speech_assistive ? "remove" : "add"
       ]("disabled");
+
+      // If we turn sound off we should also turn speech have_speech_assistive off
+      if(!this.game.have_audio) {
+        this.game.have_speech_assistive = false
+        localStorage.setItem('have_speech_assistive', this.have_speech_assistive)
+      }
     };
     let onSoundToggle = (evt) => {
       evt.preventDefault();
       evt.stopPropagation();
       this.have_audio = !this.have_audio;
+      this.game.have_audio = this.have_audio
+      localStorage.setItem('have_audio', this.have_audio)
       updateAudioToggles();
     };
     let onSpeechToggle = (evt) => {
       evt.preventDefault();
       evt.stopPropagation();
       this.have_speech_assistive = !this.have_speech_assistive;
+      this.game.have_speech_assistive = this.have_speech_assistive;
+      localStorage.setItem('have_speech_assistive', this.have_speech_assistive)
+
       updateAudioToggles();
     };
     updateAudioToggles();
@@ -77,18 +125,41 @@ class TitleState {
     speechToggle.addEventListener("click", onSpeechToggle, true);
 
     // This toggle allows the user to enable or disable visual cues.
-    const visualToggle = document.querySelector(".visual-toggle");
     const onVisualToggle = (e) => {
       // TODO: If we use a <span> instead of a <a> for the toggle, we don't
-      //   need to call these two methods.
+      // need to call these two methods.
       e.preventDefault();
       e.stopPropagation();
       this.have_visual_cues = !this.have_visual_cues;
+      this.game.have_visual_cues = this.have_visual_cues;
       const action = this.have_visual_cues ? "remove" : "add";
+      localStorage.setItem('have_visual_cues', this.have_visual_cues)
       visualToggle.classList[action]("disabled");
     };
     visualToggle.addEventListener("click", onVisualToggle, true);
+
+    const resetButton = document.querySelector(".reset-button");
+    const onReset = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.clearProgress();
+    }
+
+    resetButton.addEventListener('click', onReset, true)
   }
+
+    // Clear the current progress
+    clearProgress() {
+      if (typeof(Storage) !== 'undefined') {
+        const confirm = window.confirm('Are you sure you want to clear your progress? This will restart your current game.');
+        if (confirm) {
+          localStorage.removeItem(this.course.storageKey);
+          localStorage.removeItem('intro');
+          window.location.reload();
+        }
+      }
+    }
 
   init(params) {
     // Check if game should restart if resetting progress

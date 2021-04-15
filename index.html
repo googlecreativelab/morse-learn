@@ -14,38 +14,39 @@
     <div id="landscape">Please rotate back to portrait mode.</div>
     <a id="button">?</a>
     <div class="tl-btn-group">
+      <h2>Settings</h2>
+      <p>Click the buttons below to turn the settings off and on.</p>
       <a href title="Audio toggle" class="item audio-toggle"
-        ><i class="fa fa-2x fa-volume-up"></i
-      ></a>
+        ><i class="fa fa-2x fa-volume-up"></i><span>Sound</span></a
+      >
       <a href title="Speech toggle" class="item speech-toggle"
         ><i class="fa fa-2x fa-assistive-listening-systems"></i
-      ></a>
+        ><span>Speech Hints</span></a
+      >
       <a href title="Visual toggle" class="item visual-toggle"
-        ><i class="fa fa-2x fa-eye"></i
-      ></a>
+        ><i class="fa fa-2x fa-eye"></i><span>Visual Hints</span></a
+      >
+      <a href title="Reset Progress" class="item reset-button"
+        ><i class="fa fa-2x fa-redo"></i><span>Reset Progress</span></a
+      >
     </div>
     <div id="overlay">
       <div class="wrapper">
         <div class="title">About</div>
         <p>
           We created this trainer to make learning Morse code more fun. Give it
-          a try once you’ve set up
-          <a
-            href="https://support.google.com/accessibility/android/answer/9011881"
-            >Morse code for Gboard</a
-          >
-          and are ready to learn to type Morse code.
+          a try using the on screen buttons or input device of your choice.
         </p>
         <p>
-          This experiment is part of a larger project to support Morse code for
-          accessible communication. Learn More at
+          This experiment was originally developed by Google to support Morse
+          code for accessible communication. Learn More at
           <a href="http://morse.withgoogle.com/">g.co/morse</a>.
         </p>
         <p>
-          Built by Tania Finlayson,<br />Use All Five and<br />Google Creative
-          Lab.
+          Built by Tania Finlayson, Use All Five, Google Creative Lab and
+          AceCentre
         </p>
-        <img src="assets/images/badge.svg" />
+        <img src="assets/images/logos-new.png" />
       </div>
     </div>
     <div id="loading-overlay">
@@ -71,26 +72,39 @@
 
     <div id="morseboard" data-children-count="1">
       <input id="output" readonly="true" tabindex="-1" />
-      <div id="button-box">
 
-        <div class="dot-box">
-          <div class="dot-column">
-            <button class="keybutton dotkey">.</button>
-            <button class="keybutton dotkey">j</button>
+      <div class="keyboard-controls">
+        <h3>Keyboard Controls</h3>
+        <div>
+          <p>Dot Keys</p>
+          <div>
+            <button class="keybutton">.</button>
+            <button class="keybutton">j</button>
+            <button class="keybutton longkey">enter</button>
           </div>
-          <button id="dot" tabindex="0">
-            <span></span>
-          </button>
         </div>
 
-        <div class="dash-box">
-          <button id="dash" tabindex="0">
-            <span></span>
-          </button>
-          <div class="dash-column">
-            <button class="keybutton dashkey">-</button>
-            <button class="keybutton dashkey">k</button>
-            <button class="keybutton dashkey">/</button>
+        <div>
+          <p>Dash Keys</p>
+          <div>
+            <button class="keybutton">-</button>
+            <button class="keybutton">k</button>
+            <button class="keybutton longkey">space</button>
+          </div>
+        </div>
+      </div>
+      <div class="button-container">
+        <div id="button-box">
+          <div class="dot-box">
+            <button id="dot" tabindex="0">
+              <span></span>
+            </button>
+          </div>
+
+          <div class="dash-box">
+            <button id="dash" tabindex="0">
+              <span></span>
+            </button>
           </div>
         </div>
       </div>

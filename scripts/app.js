@@ -50,6 +50,7 @@ class App {
   }
 
   // Determines starting device orientation
+  // TODO Figure out why this needs to return a promise even though there is no async code
   determineOrientation() {
     let bodyHeight = getClientHeight();
 
