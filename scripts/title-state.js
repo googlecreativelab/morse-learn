@@ -137,7 +137,29 @@ class TitleState {
       visualToggle.classList[action]("disabled");
     };
     visualToggle.addEventListener("click", onVisualToggle, true);
+
+    const resetButton = document.querySelector(".reset-button");
+    const onReset = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      this.clearProgress();
+    }
+
+    resetButton.addEventListener('click', onReset, true)
   }
+
+    // Clear the current progress
+    clearProgress() {
+      if (typeof(Storage) !== 'undefined') {
+        const confirm = window.confirm('Are you sure you want to clear your progress? This will restart your current game.');
+        if (confirm) {
+          localStorage.removeItem(this.course.storageKey);
+          localStorage.removeItem('intro');
+          window.location.reload();
+        }
+      }
+    }
 
   init(params) {
     // Check if game should restart if resetting progress
