@@ -9,5 +9,11 @@ export function getClientHeight () {
    * to 25vh which is 25%, so overall we end up with 100%
    */
 
-  return (document.body.clientHeight || window.innerHeight) * 0.75 
+  return (document.body.clientHeight || window.innerHeight)
+}
+
+export function getKeyboardHeight () {
+  const documentHeight = (document.body.clientHeight || window.innerHeight)
+  const keyboardHeight = Math.max(documentHeight * 0.25, 227)
+  return keyboardHeight
 }
