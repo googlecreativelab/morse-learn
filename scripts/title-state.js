@@ -34,6 +34,33 @@ class TitleState {
     this.hasStarted = false;
     this.game = game;
 
+    // Only start listening once we have tracking consent
+    this.getConsent(() => {
+      this.setupListeners()
+    })
+  }
+
+  async getConsent(cb) {
+    const TRACKING_ALLOWED_KEY = 'isTrackingAllowed';
+    const trackingConsent = getBoolFromLocalStore(TRACKING_ALLOWED_KEY)
+
+    // If the user has consented either way we can continue
+    if(trackingConsent === true || trackingConsent === false) {
+      cb()
+    } else { // If the user hasn't responded we can wait until they do
+      // Show the modal
+      const consentModal = document.getElementById('consent-modal');
+      consentModal.style.display = 'flex';
+
+      await new Promise(res => setTimeout(res, 10000))
+
+      consentModal.style.display = 'none';
+      cb();
+    }
+    
+  }
+
+  setupListeners() {
     // This code is pretty flakey, there is probably a cleaner way to do this in phaser
     const canvas = document.querySelector("canvas");
 
@@ -149,17 +176,17 @@ class TitleState {
     resetButton.addEventListener('click', onReset, true)
   }
 
-    // Clear the current progress
-    clearProgress() {
-      if (typeof(Storage) !== 'undefined') {
-        const confirm = window.confirm('Are you sure you want to clear your progress? This will restart your current game.');
-        if (confirm) {
-          localStorage.removeItem(this.course.storageKey);
-          localStorage.removeItem('intro');
-          window.location.reload();
-        }
+  // Clear the current progress
+  clearProgress() {
+    if (typeof(Storage) !== 'undefined') {
+      const confirm = window.confirm('Are you sure you want to clear your progress? This will restart your current game.');
+      if (confirm) {
+        localStorage.removeItem(this.course.storageKey);
+        localStorage.removeItem('intro');
+        window.location.reload();
       }
     }
+  }
 
   init(params) {
     // Check if game should restart if resetting progress
