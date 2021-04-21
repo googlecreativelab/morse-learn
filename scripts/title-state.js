@@ -91,7 +91,8 @@ class TitleState {
     // Set the initial values to whatever is in local storage
     const initialVisualCues = getBoolFromLocalStore('have_visual_cues')
     const initialAudio = getBoolFromLocalStore('have_audio')
-    const initialSpeechAssistive = getBoolFromLocalStore('have_speech_assistive') 
+    const initialSpeechAssistive = getBoolFromLocalStore('have_speech_assistive')
+    const initialTrackingConsent = getBoolFromLocalStore(TRACKING_ALLOWED_KEY)
     this.game.have_visual_cues = initialVisualCues
     this.game.have_audio = initialAudio
     this.game.have_speech_assistive = initialSpeechAssistive
@@ -102,11 +103,13 @@ class TitleState {
     let audioToggle = document.querySelector(".audio-toggle");
     let speechToggle = document.querySelector(".speech-toggle");
     let visualToggle = document.querySelector(".visual-toggle");
+    let trackingToggle = document.querySelector(".consent-toggle");
 
     // Make the display match the initial state
     audioToggle.classList.add(initialAudio ? 'noop' : 'disabled')
     speechToggle.classList.add(initialSpeechAssistive ? 'noop' : 'disabled')
     visualToggle.classList.add(initialVisualCues ? 'noop' : 'disabled')
+    trackingToggle.classList.add(initialTrackingConsent ? 'noop' : 'disabled')
 
     const startListener = () => doStart();
 
@@ -176,6 +179,18 @@ class TitleState {
     };
     visualToggle.addEventListener("click", onVisualToggle, true);
 
+    const onTrackingToggle = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const current = getBoolFromLocalStore(TRACKING_ALLOWED_KEY)
+      const newValue = !current
+      const action = newValue ? "remove" : "add";
+      localStorage.setItem(TRACKING_ALLOWED_KEY, newValue)
+      trackingToggle.classList[action]("disabled");
+    }
+    trackingToggle.addEventListener("click", onTrackingToggle, true);
+
     const resetButton = document.querySelector(".reset-button");
     const onReset = (e) => {
       e.preventDefault();
@@ -185,6 +200,19 @@ class TitleState {
     }
 
     resetButton.addEventListener('click', onReset, true)
+
+    // Send progress to the server every
+    // 60 seconds if consent is turned on
+    const SEND_PROGRESS_INTERVAL = 30 * 1000;
+    setInterval(() => {
+      const consented = getBoolFromLocalStore(TRACKING_ALLOWED_KEY) 
+
+      if(consented) this.sendProgress()
+    }, SEND_PROGRESS_INTERVAL)
+  }
+
+  async sendProgress() {
+    console.log('Sending progress')
   }
 
   // Clear the current progress
