@@ -1,0 +1,17 @@
+{
+    "prod": {
+        "driver": "mysql",
+        "host": "cip-109-107-38-255.gb1.brightbox.com",
+        "user": "morse_learn",
+        "database": "morse_learn",
+        "password": {"ENV": "DB_PASSWORD"}
+    },
+    "local": {
+        "driver": "mysql",
+        "host": "localhost",
+        "port": 8889,
+        "user": "root",
+        "database": "morse_learn",
+        "password": "root"
+    }
+}
