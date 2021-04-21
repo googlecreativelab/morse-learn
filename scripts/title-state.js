@@ -15,6 +15,8 @@
 const config = require("./config");
 import { morseToEnglish } from "./morse-dictionary";
 
+const TRACKING_ALLOWED_KEY = 'isTrackingAllowed';
+
 /**
  * Localstorage stores booleans as strings so we
  * cast them to real bools here 
@@ -41,7 +43,6 @@ class TitleState {
   }
 
   async getConsent(cb) {
-    const TRACKING_ALLOWED_KEY = 'isTrackingAllowed';
     const trackingConsent = getBoolFromLocalStore(TRACKING_ALLOWED_KEY)
 
     // If the user has consented either way we can continue
@@ -52,10 +53,20 @@ class TitleState {
       const consentModal = document.getElementById('consent-modal');
       consentModal.style.display = 'flex';
 
-      await new Promise(res => setTimeout(res, 10000))
+      const consentYesButton = document.getElementById('consent-yes')
+      const consentNoButton = document.getElementById('consent-no')
 
-      consentModal.style.display = 'none';
-      cb();
+      consentYesButton.addEventListener('click', () => {
+        localStorage.setItem(TRACKING_ALLOWED_KEY, true);
+        consentModal.style.display = 'none';
+        cb()
+      })
+
+      consentNoButton.addEventListener('click', () => {
+        localStorage.setItem(TRACKING_ALLOWED_KEY, false);
+        consentModal.style.display = 'none';
+        cb()
+      })
     }
     
   }
