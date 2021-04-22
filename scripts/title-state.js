@@ -14,6 +14,7 @@
 
 const config = require("./config");
 import { morseToEnglish } from "./morse-dictionary";
+import { timePlaytime, TIMEKEY } from "./time-playtime";
 
 const TRACKING_ALLOWED_KEY = 'isTrackingAllowed';
 
@@ -125,6 +126,8 @@ class TitleState {
       this.game.have_visual_cues = this.have_visual_cues;
       this.start();
       this.hasStarted = true;
+
+      timePlaytime()
     };
 
     document.addEventListener("keydown", startListener);
@@ -213,6 +216,36 @@ class TitleState {
 
   async sendProgress() {
     console.log('Sending progress')
+
+    try {
+      const visualHints = getBoolFromLocalStore('have_visual_cues')
+      const sound = getBoolFromLocalStore('have_audio')
+      const speechHints = getBoolFromLocalStore('have_speech_assistive')
+      const progress = localStorage.getItem('savedLetters') || EMPTY_PROGRESS;
+      const timePlayed = localStorage.getItem(TIMEKEY)
+
+      const data = {
+        timePlayed,
+        visualHints,
+        sound,
+        speechHints,
+        progress
+      }
+
+      await fetch('/.netlify/functions/analytics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      console.log('Progress Sent')
+    } catch (e) {
+      // We swallow the error and warn because
+      // collecting analytics shouldn't break the game
+      console.warn(e)
+    }
   }
 
   // Clear the current progress
@@ -375,5 +408,7 @@ class TitleState {
     }
   }
 }
+
+const EMPTY_PROGRESS = {"e":0,"t":0,"a":0,"i":0,"m":0,"s":0,"o":0,"h":0,"n":0,"c":0,"r":0,"d":0,"u":0,"k":0,"l":0,"f":0,"b":0,"p":0,"g":0,"j":0,"v":0,"q":0,"w":0,"x":0,"y":0,"z":0}
 
 module.exports.TitleState = TitleState;
