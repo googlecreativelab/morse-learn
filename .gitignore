@@ -4,3 +4,7 @@
 yarn-error.log
 node_modules*
 build
+
+# Local Netlify folder
+.netlify
+.env

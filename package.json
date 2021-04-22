@@ -35,7 +35,7 @@
   "scripts": {
     "postinstall": "npm run require-fontawesome",
     "browserify": "browserify scripts/app.js -o build/bundle.js",
-    "build": "npm run browserify; npm run uglifyjs; npm run sass; npm run uglifycss",
+    "build": "npm run browserify; npm run sass; npm run uglifycss",
     "deploy": "npm run build; gcloud app deploy --project=gweb-morse-tts",
     "eslint": "eslint scripts",
     "precommit": "true",
@@ -46,7 +46,9 @@
     "serve": "budo scripts/app.js:build/bundle.js --live --host 0.0.0.0",
     "start": "npm run sass; concurrently -k -p \"[{name}]\" -n \"HTTP,SASS\" -c \"bgBlue.bold,bgMagenta.bold\" \"npm run serve\" \"npm run sasswatch\"",
     "uglifycss": "uglifycss build/style.css --output build/style.css",
-    "uglifyjs": "uglifyjs build/bundle.js -o build/bundle.js"
+    "uglifyjs": "uglifyjs build/bundle.js -o build/bundle.js",
+    "create-db": "docker run --name morse-learn-db -e MYSQL_ROOT_PASSWORD=root -d mysql/mysql-server",
+    "teardown-db": "docker container stop morse-learn-db && docker container rm morse-learn-db"
   },
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.12.0",
@@ -65,8 +67,14 @@
     "uglifycss": "^0.0.27"
   },
   "dependencies": {
+    "cookie": "^0.4.1",
+    "db-migrate": "^0.11.12",
+    "db-migrate-mysql": "^2.1.2",
+    "dotenv": "^8.2.0",
     "lodash": "^4.17.5",
+    "mysql2": "^2.2.5",
     "natives": "^1.1.6",
-    "spinkit": "^2.0.1"
+    "spinkit": "^2.0.1",
+    "uuid": "^8.3.2"
   }
 }

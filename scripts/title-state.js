@@ -14,6 +14,9 @@
 
 const config = require("./config");
 import { morseToEnglish } from "./morse-dictionary";
+import { timePlaytime, TIMEKEY } from "./time-playtime";
+
+const TRACKING_ALLOWED_KEY = 'isTrackingAllowed';
 
 /**
  * Localstorage stores booleans as strings so we
@@ -34,6 +37,45 @@ class TitleState {
     this.hasStarted = false;
     this.game = game;
 
+    // Only start listening once we have tracking consent
+    this.getConsent(() => {
+      document.querySelector('.about-button').display = 'block'
+
+      this.setupListeners()
+    })
+  }
+
+  async getConsent(cb) {
+    const trackingConsent = getBoolFromLocalStore(TRACKING_ALLOWED_KEY)
+
+    // If the user has consented either way we can continue
+    if(trackingConsent === true || trackingConsent === false) {
+      cb()
+    } else { // If the user hasn't responded we can wait until they do
+      // Show the modal
+      const consentModal = document.getElementById('consent-modal');
+      consentModal.focus()
+      consentModal.style.display = 'flex';
+
+      const consentYesButton = document.getElementById('consent-yes')
+      const consentNoButton = document.getElementById('consent-no')
+
+      consentYesButton.addEventListener('click', () => {
+        localStorage.setItem(TRACKING_ALLOWED_KEY, true);
+        consentModal.style.display = 'none';
+        cb()
+      })
+
+      consentNoButton.addEventListener('click', () => {
+        localStorage.setItem(TRACKING_ALLOWED_KEY, false);
+        consentModal.style.display = 'none';
+        cb()
+      })
+    }
+    
+  }
+
+  setupListeners() {
     // This code is pretty flakey, there is probably a cleaner way to do this in phaser
     const canvas = document.querySelector("canvas");
 
@@ -53,7 +95,8 @@ class TitleState {
     // Set the initial values to whatever is in local storage
     const initialVisualCues = getBoolFromLocalStore('have_visual_cues')
     const initialAudio = getBoolFromLocalStore('have_audio')
-    const initialSpeechAssistive = getBoolFromLocalStore('have_speech_assistive') 
+    const initialSpeechAssistive = getBoolFromLocalStore('have_speech_assistive')
+    const initialTrackingConsent = getBoolFromLocalStore(TRACKING_ALLOWED_KEY)
     this.game.have_visual_cues = initialVisualCues
     this.game.have_audio = initialAudio
     this.game.have_speech_assistive = initialSpeechAssistive
@@ -64,11 +107,13 @@ class TitleState {
     let audioToggle = document.querySelector(".audio-toggle");
     let speechToggle = document.querySelector(".speech-toggle");
     let visualToggle = document.querySelector(".visual-toggle");
+    let trackingToggle = document.querySelector(".consent-toggle");
 
     // Make the display match the initial state
     audioToggle.classList.add(initialAudio ? 'noop' : 'disabled')
     speechToggle.classList.add(initialSpeechAssistive ? 'noop' : 'disabled')
     visualToggle.classList.add(initialVisualCues ? 'noop' : 'disabled')
+    trackingToggle.classList.add(initialTrackingConsent ? 'noop' : 'disabled')
 
     const startListener = () => doStart();
 
@@ -84,13 +129,15 @@ class TitleState {
       this.game.have_visual_cues = this.have_visual_cues;
       this.start();
       this.hasStarted = true;
+
+      timePlaytime()
     };
 
     document.addEventListener("keydown", startListener);
 
     canvas.addEventListener("click", startListener);
 
-    document.querySelector(".tl-btn-group").style.opacity = 1;
+    document.querySelector(".tl-btn-group").style.display = 'flex';
     let updateAudioToggles = () => {
       audioToggle.classList[this.have_audio ? "remove" : "add"]("disabled");
       speechToggle.classList[
@@ -138,6 +185,18 @@ class TitleState {
     };
     visualToggle.addEventListener("click", onVisualToggle, true);
 
+    const onTrackingToggle = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+
+      const current = getBoolFromLocalStore(TRACKING_ALLOWED_KEY)
+      const newValue = !current
+      const action = newValue ? "remove" : "add";
+      localStorage.setItem(TRACKING_ALLOWED_KEY, newValue)
+      trackingToggle.classList[action]("disabled");
+    }
+    trackingToggle.addEventListener("click", onTrackingToggle, true);
+
     const resetButton = document.querySelector(".reset-button");
     const onReset = (e) => {
       e.preventDefault();
@@ -147,19 +206,62 @@ class TitleState {
     }
 
     resetButton.addEventListener('click', onReset, true)
+
+    // Send progress to the server every
+    // 60 seconds if consent is turned on
+    const SEND_PROGRESS_INTERVAL = 30 * 1000;
+    setInterval(() => {
+      const consented = getBoolFromLocalStore(TRACKING_ALLOWED_KEY) 
+
+      if(consented) this.sendProgress()
+    }, SEND_PROGRESS_INTERVAL)
   }
 
-    // Clear the current progress
-    clearProgress() {
-      if (typeof(Storage) !== 'undefined') {
-        const confirm = window.confirm('Are you sure you want to clear your progress? This will restart your current game.');
-        if (confirm) {
-          localStorage.removeItem(this.course.storageKey);
-          localStorage.removeItem('intro');
-          window.location.reload();
-        }
+  async sendProgress() {
+    console.log('Sending progress')
+
+    try {
+      const visualHints = getBoolFromLocalStore('have_visual_cues')
+      const sound = getBoolFromLocalStore('have_audio')
+      const speechHints = getBoolFromLocalStore('have_speech_assistive')
+      const progress = localStorage.getItem('savedLetters') || EMPTY_PROGRESS;
+      const timePlayed = parseInt(localStorage.getItem(TIMEKEY))
+
+      const data = {
+        timePlayed,
+        visualHints,
+        sound,
+        speechHints,
+        progress: JSON.parse(progress)
+      }
+
+      await fetch('/.netlify/functions/analytics', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      })
+
+      console.log('Progress Sent')
+    } catch (e) {
+      // We swallow the error and warn because
+      // collecting analytics shouldn't break the game
+      console.warn(e)
+    }
+  }
+
+  // Clear the current progress
+  clearProgress() {
+    if (typeof(Storage) !== 'undefined') {
+      const confirm = window.confirm('Are you sure you want to clear your progress? This will restart your current game.');
+      if (confirm) {
+        localStorage.removeItem(this.course.storageKey);
+        localStorage.removeItem('intro');
+        window.location.reload();
       }
     }
+  }
 
   init(params) {
     // Check if game should restart if resetting progress
@@ -309,5 +411,7 @@ class TitleState {
     }
   }
 }
+
+const EMPTY_PROGRESS = {"e":0,"t":0,"a":0,"i":0,"m":0,"s":0,"o":0,"h":0,"n":0,"c":0,"r":0,"d":0,"u":0,"k":0,"l":0,"f":0,"b":0,"p":0,"g":0,"j":0,"v":0,"q":0,"w":0,"x":0,"y":0,"z":0}
 
 module.exports.TitleState = TitleState;

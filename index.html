@@ -12,7 +12,7 @@
   </head>
   <body>
     <div id="landscape">Please rotate back to portrait mode.</div>
-    <a id="button">?</a>
+    <a id="button" class="about-button">?</a>
     <div class="tl-btn-group">
       <h2>Settings</h2>
       <p>Click the buttons below to turn the settings off and on.</p>
@@ -29,6 +29,9 @@
       <a href title="Reset Progress" class="item reset-button"
         ><i class="fa fa-2x fa-redo"></i><span>Reset Progress</span></a
       >
+      <a href title="Tracking Consent" class="item consent-toggle"
+      ><i class="fa fa-2x fa-binoculars"></i><span>Tracking Consent</span></a
+    >
     </div>
     <div id="overlay">
       <div class="wrapper">
@@ -106,6 +109,32 @@
               <span></span>
             </button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="consent-modal" class="modal-container">
+      <div  class="modal">
+        <h1>Data Collection Consent</h1>
+        <p>
+          Ace Centre are researching into the time it takes people to learn
+          morse code with different learning methods. To enable this we need to collect
+          some anonymous data as you learn. We will only collect your playtime,
+          your progress and your game settings. You will be tracked with a
+          cookie, but we won’t save any personal data.
+        </p>
+        <p>
+          We will only collect your play time, your progress and your game
+          settings. You will be tracked with a cookie, but we won’t save any
+          personal data.
+        </p>
+        <p class="strong">
+          If you are okay with us collecting this data press the button below
+          and get playing!
+        </p>
+        <div class="consent-button-container">
+          <button id="consent-no" class="secondary">No, opt out</button>
+          <button id="consent-yes" class="primary">Yes, use my data</button>
         </div>
       </div>
     </div>
