@@ -10,11 +10,10 @@ const cookie = require('cookie')
 
 // create the connection to database
 const connection = mysql.createConnection({
-  host: "localhost",
-  port: 8889,
-  user: "root",
+  host: "cip-109-107-38-255.gb1.brightbox.com",
+  user: "morse_learn",
   database: "morse_learn",
-  password: "root",
+  password: process.env.DB_PASSWORD,
 });
 
 // TODO: Create a new row if user changes settings

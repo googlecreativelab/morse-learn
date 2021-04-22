@@ -1,4 +1,4 @@
-@port = 52130
+@port = 56774
 
 ###
 POST http://localhost:{{ port }}/.netlify/functions/analytics
