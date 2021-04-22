@@ -222,14 +222,14 @@ class TitleState {
       const sound = getBoolFromLocalStore('have_audio')
       const speechHints = getBoolFromLocalStore('have_speech_assistive')
       const progress = localStorage.getItem('savedLetters') || EMPTY_PROGRESS;
-      const timePlayed = localStorage.getItem(TIMEKEY)
+      const timePlayed = parseInt(localStorage.getItem(TIMEKEY))
 
       const data = {
         timePlayed,
         visualHints,
         sound,
         speechHints,
-        progress
+        progress: JSON.parse(progress)
       }
 
       await fetch('/.netlify/functions/analytics', {
