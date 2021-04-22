@@ -1,0 +1,16 @@
+@port = 52130
+
+###
+POST http://localhost:{{ port }}/.netlify/functions/analytics
+Content-Type: application/json
+COOKIE: userIdentifier=73684624-fdb0-477c-8488-52331f2e2990;
+
+{
+    "timePlayed": 10000,
+    "visualHints": true,
+    "sound": true,
+    "speechHints": true,
+    "progress": {
+        "e":3,"t":3,"a":2,"i":0,"m":0,"s":0,"o":0,"h":0,"n":0,"c":0,"r":0,"d":0,"u":0,"k":0,"l":0,"f":0,"b":0,"p":0,"g":0,"j":0,"v":0,"q":0,"w":0,"x":0,"y":0,"z":0
+    }
+}
