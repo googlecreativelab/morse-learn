@@ -6,7 +6,7 @@ const {
   version: uuidVersion,
   validate: uuidValidate,
 } = require("uuid");
-const cookie = require('cookie')
+const cookie = require("cookie");
 
 // create the connection to database
 const connection = mysql.createConnection({
@@ -15,9 +15,6 @@ const connection = mysql.createConnection({
   database: "morse_learn",
   password: process.env.DB_PASSWORD,
 });
-
-// TODO: Create a new row if user changes settings
-// TODO: Check that howManyCorrectAnswersToLearn is correct
 
 const handler = async (event, context) => {
   try {
@@ -53,8 +50,17 @@ const handler = async (event, context) => {
     throwIfUndefinedOrNull(settingsDump, "settingsDump");
 
     // Get the userId (or a new one if one isnt given)
-    const userIdentifier = getUserIdCookie(event.headers.cookie);
-    const userAggregate = await getAggregateRow(connection, userIdentifier);
+    let userIdentifier = getUserIdCookie(event.headers.cookie);
+    const userAggregate = await getAggregateRow(connection, userIdentifier, {
+      speechHints,
+      visualHints,
+      sound,
+    });
+
+    // If we are making a new user lets make a new ID
+    // Even if one is passed in we want to set a new one
+    // User with new settings is basically a new user
+    if (!userAggregate) userIdentifier = uuidv4();
 
     // Its a new user so lets insert them
     if (!userAggregate) {
@@ -129,14 +135,16 @@ const handler = async (event, context) => {
 
     return {
       statusCode: 200,
-      body: JSON.stringify({ message: `Successfully logged progress for ${userIdentifier}` }),
+      body: JSON.stringify({
+        message: `Successfully logged progress for ${userIdentifier}`,
+      }),
       headers: {
-        'Set-Cookie': cookie.serialize('userIdentifier', userIdentifier, {
+        "Set-Cookie": cookie.serialize("userIdentifier", userIdentifier, {
           httpOnly: true,
-          path: '/',
+          path: "/",
           maxAge: 2147483647, // Largest max age allowed
         }),
-      }
+      },
     };
   } catch (error) {
     return { statusCode: 500, body: error.toString() };
@@ -165,16 +173,25 @@ const throwIfUndefinedOrNull = (value, key) => {
   }
 };
 
-const getAggregateRow = async (currentConnection, userId) => {
+// Only selects the row if it fully matches the settings given
+const getAggregateRow = async (
+  currentConnection,
+  userId,
+  { sound, visualHints, speechHints }
+) => {
   // Bail early if there is no userId
   if (userId === null) return null;
 
   const { results } = await query(
     currentConnection,
     `
-    SELECT * FROM user_aggregate WHERE userIdentifier = ?;
+    SELECT * FROM user_aggregate
+    WHERE userIdentifier = ?
+    AND sound = ?
+    AND visualHints = ? 
+    AND speechHints = ?;
   `,
-    [userId]
+    [userId, sound, visualHints, speechHints]
   );
 
   if (results.length === 0) return null;
@@ -193,10 +210,10 @@ const query = (currentConnection, query, params) => {
 };
 
 // Parse the cookie for valid useridentifier.
-// Return a new id if it cant find one
+// Return a null if it cant find one
 const getUserIdCookie = (cookies = "") => {
-  // Return new UUID if no cookies
-  if (!cookies) return uuidv4();
+  // Return null if no cookies
+  if (!cookies) return null;
 
   const split = cookies.split(";");
   const keyValues = split.map((x) => x.split("="));
@@ -209,14 +226,14 @@ const getUserIdCookie = (cookies = "") => {
     }
   }
 
-  // Return new UUID if no cookie with the key 'useridentifier'
-  if (userId === null) return uuidv4();
+  // Return null if no cookie with the key 'useridentifier'
+  if (userId === null) return null;
 
   // Return the userId if the id is a valid uuid
   if (isValidId(userId)) return userId;
 
-  // Return new UUID if the cookie is not a valid uuid
-  return uuidv4();
+  // Return null if the cookie is not a valid uuid
+  return null;
 };
 
 function isValidId(uuid) {
