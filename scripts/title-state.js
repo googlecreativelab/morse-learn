@@ -39,6 +39,8 @@ class TitleState {
 
     // Only start listening once we have tracking consent
     this.getConsent(() => {
+      document.querySelector('.about-button').display = 'block'
+
       this.setupListeners()
     })
   }
@@ -52,6 +54,7 @@ class TitleState {
     } else { // If the user hasn't responded we can wait until they do
       // Show the modal
       const consentModal = document.getElementById('consent-modal');
+      consentModal.focus()
       consentModal.style.display = 'flex';
 
       const consentYesButton = document.getElementById('consent-yes')
@@ -134,7 +137,7 @@ class TitleState {
 
     canvas.addEventListener("click", startListener);
 
-    document.querySelector(".tl-btn-group").style.opacity = 1;
+    document.querySelector(".tl-btn-group").style.display = 'flex';
     let updateAudioToggles = () => {
       audioToggle.classList[this.have_audio ? "remove" : "add"]("disabled");
       speechToggle.classList[

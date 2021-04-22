@@ -95,7 +95,7 @@ class App {
         document.getElementById('landscape').style.display = 'none';
 
         if (this.game.state.current === 'title') {
-          document.getElementById('button').style.display = 'block';
+          // document.getElementById('button').style.display = 'block';
           document.getElementById('overlay').style.display = 'block';
         }
       });

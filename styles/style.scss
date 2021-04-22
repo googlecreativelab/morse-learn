@@ -334,10 +334,13 @@ body {
   }
 }
 
+.about-button {
+  display: none;
+}
+
 .tl-btn-group {
   position: fixed;
-  display: flex;
-  opacity: 0;
+  display: none;
   flex-direction: column;
   left: 1em;
   top: 1em;
