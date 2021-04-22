@@ -172,7 +172,7 @@ const getAggregateRow = async (currentConnection, userId) => {
   const { results } = await query(
     currentConnection,
     `
-    SELECT * FROM user_aggregate;
+    SELECT * FROM user_aggregate WHERE userIdentifier = ?;
   `,
     [userId]
   );
