@@ -123,7 +123,7 @@ class App {
   preload() {
     GameApp.enableLoadingModal()
 
-    Images
+    // Images
     this.game.load.image('a', 'assets/images/final/A.png');
     this.game.load.image('b', 'assets/images/final/B.png');
     this.game.load.image('c', 'assets/images/final/C.png');
