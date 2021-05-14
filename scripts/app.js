@@ -124,32 +124,34 @@ class App {
     GameApp.enableLoadingModal()
 
     // Images
-    this.game.load.image('a', 'assets/images/png/Archery.png');
-    this.game.load.image('b', 'assets/images/png/Banjo.png');
-    this.game.load.image('c', 'assets/images/png/Candy.png');
-    this.game.load.image('d', 'assets/images/png/Dog.png');
-    this.game.load.image('e', 'assets/images/png/Eye.png');
-    this.game.load.image('f', 'assets/images/png/Firetruck.png');
-    this.game.load.image('g', 'assets/images/png/Giraffe.png');
-    this.game.load.image('h', 'assets/images/png/Hippo.png');
-    this.game.load.image('i', 'assets/images/png/Insect.png');
-    this.game.load.image('j', 'assets/images/png/Jet.png');
-    this.game.load.image('k', 'assets/images/png/Kite.png');
-    this.game.load.image('l', 'assets/images/png/Laboratory.png');
-    this.game.load.image('m', 'assets/images/png/Mustache.png');
-    this.game.load.image('n', 'assets/images/png/Net.png');
-    this.game.load.image('o', 'assets/images/png/Orchestra.png');
-    this.game.load.image('p', 'assets/images/png/Paddle.png');
-    this.game.load.image('q', 'assets/images/png/Quarterback.png');
-    this.game.load.image('r', 'assets/images/png/Robot.png');
-    this.game.load.image('s', 'assets/images/png/Submarine.png');
-    this.game.load.image('t', 'assets/images/png/Tape.png');
-    this.game.load.image('u', 'assets/images/png/Unicorn.png');
-    this.game.load.image('v', 'assets/images/png/Vacuum.png');
-    this.game.load.image('w', 'assets/images/png/Wand.png');
-    this.game.load.image('x', 'assets/images/png/X-ray.png');
-    this.game.load.image('y', 'assets/images/png/Yard.png');
-    this.game.load.image('z', 'assets/images/png/Zebra.png');
+    this.game.load.image('a', 'assets/images/final/A.png');
+    this.game.load.image('b', 'assets/images/final/B.png');
+    this.game.load.image('c', 'assets/images/final/C.png');
+    this.game.load.image('d', 'assets/images/final/D.png');
+    this.game.load.image('e', 'assets/images/final/E.png');
+    this.game.load.image('f', 'assets/images/final/F.png');
+    this.game.load.image('g', 'assets/images/final/G.png');
+    this.game.load.image('h', 'assets/images/final/H.png');
+    this.game.load.image('i', 'assets/images/final/I.png');
+    this.game.load.image('j', 'assets/images/final/J.png');
+    this.game.load.image('k', 'assets/images/final/K.png');
+    this.game.load.image('l', 'assets/images/final/L.png');
+    this.game.load.image('m', 'assets/images/final/M.png');
+    this.game.load.image('n', 'assets/images/final/N.png');
+    this.game.load.image('o', 'assets/images/final/O.png');
+    this.game.load.image('p', 'assets/images/final/P.png');
+    this.game.load.image('q', 'assets/images/final/Q.png');
+    this.game.load.image('r', 'assets/images/final/R.png');
+    this.game.load.image('s', 'assets/images/final/S.png');
+    this.game.load.image('t', 'assets/images/final/T.png');
+    this.game.load.image('u', 'assets/images/final/U.png');
+    this.game.load.image('v', 'assets/images/final/V.png');
+    this.game.load.image('w', 'assets/images/final/W.png');
+    this.game.load.image('x', 'assets/images/final/X.png');
+    this.game.load.image('y', 'assets/images/final/Y.png');
+    this.game.load.image('z', 'assets/images/final/Z.png');
+
+
     this.game.load.image('close', 'assets/images/close.svg');
     this.game.load.image('badge', 'assets/images/badge.svg');
 
