@@ -29,6 +29,8 @@ const getBoolFromLocalStore = (key) => {
   return false
 }
 
+const randomBoolean = () => Math.random() < 0.5;
+
 class TitleState {
   constructor(game, course) {
     this.course = course;
@@ -62,6 +64,25 @@ class TitleState {
 
       consentYesButton.addEventListener('click', () => {
         localStorage.setItem(TRACKING_ALLOWED_KEY, true);
+
+        const randomiseSettings = document.getElementById('randomiseSettings').checked
+
+        if(randomiseSettings) {
+          const audio = randomBoolean()
+          let speechAssistive = randomBoolean()
+          const visualCues = randomBoolean()
+
+          // Not perfectly random but means we don't get invalid settings
+          if(audio === false) {
+            speechAssistive = false;
+          }
+
+          console.log('Going to randomise your settings:', {speechAssistive, audio, visualCues})
+          localStorage.setItem('have_speech_assistive', speechAssistive)
+          localStorage.setItem('have_audio', audio)
+          localStorage.setItem('have_visual_cues', visualCues)
+        }
+
         consentModal.style.display = 'none';
         cb()
       })
