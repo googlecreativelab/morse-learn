@@ -390,10 +390,14 @@ class GameSpace {
     for (let i = 0; i < letter.morse.length; i++) {
       let tmp;
       if (letter.morse[i] === "\u002D") {
-        temp.totalDuration = this.game.customSoundManager.soundDuration('dash')
+        temp = {
+          totalDuration: this.game.customSoundManager.soundDuration('dash')
+        }
         this.game.customSoundManager.playSound('dash')
       } else if (letter.morse[i] === "\u002E") {
-        temp.totalDuration = this.game.customSoundManager.soundDuration('period')
+        temp = {
+          totalDuration: this.game.customSoundManager.soundDuration('period')
+        }        
         this.game.customSoundManager.playSound('period')
       }
       await delay(300);
