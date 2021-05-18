@@ -15,7 +15,6 @@
 import { HeaderSpace } from './header-space';
 import { GameSpace } from './game-space';
 import { englishToMorse, morseToEnglish } from './morse-dictionary';
-import * as config from './config';
 
 class GameState {
 
@@ -27,16 +26,6 @@ class GameState {
     this.header = null;
     this.gameSpace = null;
     this.game = game;
-    // Setup sounds
-    let soundslist = [ 'correct', 'wrong', 'period', 'dash', ];
-    for (let letter of course.letters) {
-      soundslist.push('letter-' + letter);
-      soundslist.push('soundalike-letter-' + letter);
-    }
-    this.sounds = {};
-    for (let name of soundslist) {
-      this.sounds[name] = this.game.add.audio(name);
-    }
   }
 
   init(params) {
