@@ -18,13 +18,17 @@ class SoundManager {
   }
 
   playSound(name) {
+    this.sounds[name].currentTime = 0;
     this.sounds[name].play();
   }
 
   soundDuration(name) {
     const duration = this.sounds[name].duration;
-
     return duration;
+  }
+
+  stopSound(name) {
+    this.sounds[name].pause();
   }
 }
 
