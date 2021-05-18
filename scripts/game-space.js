@@ -366,7 +366,7 @@ class GameSpace {
    *
    * @returns {Promise<void>}
    */
-  async playLetterSoundAlike(letter) {    let name = this.parent.course.getLetterName(letter.letter);
+  async playLetterSoundAlike(letter) {
     let name = this.parent.course.getLetterName(letter.letter);
     if (this.game.have_speech_assistive) {
       await delay(300);
