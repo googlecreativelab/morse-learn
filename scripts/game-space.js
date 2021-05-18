@@ -343,7 +343,7 @@ class GameSpace {
   }
 
   async playCorrect() {
-    const soundLength = this.game.customSoundManager.soundDuration('correct')
+    const timeout = this.game.customSoundManager.soundDuration('correct')
     this.game.customSoundManager.playSound('correct');
     await delay(timeout * 1000);
   }
