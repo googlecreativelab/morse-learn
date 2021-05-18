@@ -33,6 +33,7 @@ class IntroState {
 
   playVideo() {
     const video = this.game.add.video('intro');
+    video.mute = true;
     video.addToWorld(0, 0, 0, 0, 0.5, 0.5);
     video.unlock();
     video.play();
