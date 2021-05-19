@@ -7,7 +7,8 @@ class SoundManager {
 
   createSound(name, path) {
     const newSound = new Howl({
-      src: [path]
+      src: [`${path}.mp3`]
+      // src: [ `${path}.m4a`,`${path}.mp3` ]
     });
 
     this.sounds[name] = newSound;
