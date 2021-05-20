@@ -18,6 +18,7 @@ import { GameState } from './game-state';
 import * as config from './config';
 import { getClientHeight } from './util'
 import { Course } from './course';
+import { SoundManager } from './sound-manager';
 
 class App {
 
@@ -159,19 +160,22 @@ class App {
     this.game.load.video('intro', 'assets/videos/intro.mp4');
 
     // Audio
-    this.game.load.audio('period', 'assets/sounds/period.mp3');
-    this.game.load.audio('dash', 'assets/sounds/dash.mp3');
+    this.game.customSoundManager = new SoundManager()
+    this.game.customSoundManager.createSound('period', '/assets/sounds/period')
+    this.game.customSoundManager.createSound('dash', '/assets/sounds/dash')
+    this.game.customSoundManager.createSound('dot', '/assets/sounds/dot')
+
 
     // letters + soundalike list
-    let path = 'assets/' + GameApp.course.assets;
+    let path = '/assets' + GameApp.course.assets;
     for (let letter of GameApp.course.letters) {
       this.game.load.image(letter, path + 'images/nohint.png');
-      this.game.load.audio('letter-' + letter, path + 'sounds/' + letter + '.mp3');
-      this.game.load.audio('soundalike-letter-' + letter, path + 'sounds/soundalikes-mw/' + letter + '.mp3');
+      this.game.customSoundManager.createSound('letter-' + letter, path + 'sounds/' + letter)
+      this.game.customSoundManager.createSound('soundalike-letter-' + letter, path + 'sounds/soundalikes-mw/' + letter)
     }
     // correct, wrong
-    this.game.load.audio('correct', 'assets/sounds/correct.mp3');
-    this.game.load.audio('wrong', 'assets/sounds/wrong.mp3');
+    this.game.customSoundManager.createSound('correct', '/assets/sounds/correct');
+    this.game.customSoundManager.createSound('wrong', '/assets/sounds/wrong');
   }
 
   // Show about modal

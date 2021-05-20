@@ -79,10 +79,6 @@ class GameSpace {
     this.newLetterArray.sort();
     this.loadLetters();
 
-    this.period = this.parent.sounds.period;
-    this.dash = this.parent.sounds.dash;
-
-
     this.morseBoard = new MorseBoard({
       debounce: 2e3,
       dashSoundPath: "./assets/sounds/dash.mp3",
@@ -341,23 +337,22 @@ class GameSpace {
   }
 
   async playWrong() {
-    let tmp = this.parent.sounds.wrong.play();
-    let timeout = tmp.totalDuration || 1;
+    const timeout = this.game.customSoundManager.soundDuration('wrong')
+    this.game.customSoundManager.playSound('wrong');
     await delay(timeout * 1000);
   }
 
   async playCorrect() {
-    let tmp = this.parent.sounds.correct.play();
-    let timeout = tmp.totalDuration || 1;
+    const timeout = this.game.customSoundManager.soundDuration('correct')
+    this.game.customSoundManager.playSound('correct');
     await delay(timeout * 1000);
   }
 
   async playLetter(letter) {
     let name = this.parent.course.getLetterName(letter);
-    let audio = this.parent.sounds["letter-" + name];
-    if (this.game.have_speech_assistive && audio) {
-      let tmp = audio.play();
-      let timeout = tmp.totalDuration || 1;
+    if (this.game.have_speech_assistive) {
+      this.game.customSoundManager.playSound("letter-" + name)
+      let timeout = this.game.customSoundManager.soundDuration("letter-" + name)
       await delay(timeout * 1000);
     } else {
       await delay(750);
@@ -373,11 +368,10 @@ class GameSpace {
    */
   async playLetterSoundAlike(letter) {
     let name = this.parent.course.getLetterName(letter.letter);
-    let audio = this.parent.sounds["soundalike-letter-" + name];
-    if (this.game.have_speech_assistive && audio) {
+    if (this.game.have_speech_assistive) {
       await delay(300);
-      let tmp = audio.play();
-      let timeout = tmp.totalDuration || 1;
+      this.game.customSoundManager.playSound("soundalike-letter-" + name)
+      let timeout = this.game.customSoundManager.soundDuration("soundalike-letter-" + name)
       await delay(timeout * 1000);
     }
   }
@@ -396,9 +390,15 @@ class GameSpace {
     for (let i = 0; i < letter.morse.length; i++) {
       let tmp;
       if (letter.morse[i] === "\u002D") {
-        tmp = this.dash.play();
+        tmp = {
+          totalDuration: this.game.customSoundManager.soundDuration('dash')
+        }
+        this.game.customSoundManager.playSound('dash')
       } else if (letter.morse[i] === "\u002E") {
-        tmp = this.period.play();
+        tmp = {
+          totalDuration: this.game.customSoundManager.soundDuration('period')
+        }
+        this.game.customSoundManager.playSound('period')
       }
       await delay(300);
       if (tmp) {

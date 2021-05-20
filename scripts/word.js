@@ -31,8 +31,6 @@ class Word {
     this.hints = [];
     this.pills = [];
     this.background = null;
-    this.period = this.parent.parent.sounds.period;
-    this.dash = this.parent.parent.sounds.dash;
     this.soundTimeout = null;
 
     for (let i = 0; i < this.myLength; i++) {
@@ -173,8 +171,8 @@ class Word {
 
   pushDown(i) {
     clearTimeout(this.soundTimeout);
-    this.period.stop();
-    this.dash.stop();
+    this.game.customSoundManager.stopSound('period');
+    this.game.customSoundManager.stopSound('dash');
 
     this.game.add.tween(this.letterObjects[i]).to({ y: config.GLOBALS.worldCenter }, 200, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_START_DELAY);
     this.game.add.tween(this.pills[i]).to({ y: config.GLOBALS.worldCenter }, 200, Phaser.Easing.Exponential.Out, true, config.animations.SLIDE_START_DELAY);
